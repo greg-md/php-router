@@ -112,7 +112,7 @@ class Route implements \ArrayAccess
             // split remain string
             $parts = preg_split($pattern, $format);
 
-            foreach($parts as $key => $remain) {
+            foreach ($parts as $key => $remain) {
                 if ($remain) {
                     $compiled .= Regex::quote($remain);
                 }
@@ -228,7 +228,7 @@ class Route implements \ArrayAccess
 
     protected function runBeforeMiddleware()
     {
-        foreach($this->getAllMiddleware() as $middleware) {
+        foreach ($this->getAllMiddleware() as $middleware) {
             if ($this->execBeforeMiddleware($middleware) === false) {
                 break;
             }
@@ -239,7 +239,7 @@ class Route implements \ArrayAccess
 
     protected function runAfterMiddleware()
     {
-        foreach($this->getAllMiddleware() as $middleware) {
+        foreach ($this->getAllMiddleware() as $middleware) {
             if ($this->execAfterMiddleware($middleware) === false) {
                 break;
             }
@@ -304,7 +304,7 @@ class Route implements \ArrayAccess
             if ($this->isGroup()) {
                 $subPath = array_pop($matches);
 
-                foreach($this->routes as $route) {
+                foreach ($this->routes as $route) {
                     if ($subMatchedRoute = $route->match($subPath)) {
                         $matchedRoute = $subMatchedRoute;
 
@@ -318,7 +318,7 @@ class Route implements \ArrayAccess
             if ($matchedRoute) {
                 $params = [];
 
-                foreach($compiledParams as $key => $param) {
+                foreach ($compiledParams as $key => $param) {
                     if (array_key_exists($key, $matches) and !Str::isEmpty($matches[$key])) {
                         $params[$param] = $this->decode($matches[$key]);
                     } else {
@@ -356,7 +356,7 @@ class Route implements \ArrayAccess
 
                 $matchedParams = $params;
 
-                foreach($this->onMatch as $callable) {
+                foreach ($this->onMatch as $callable) {
                     $this->callCallableWith($callable, $matchedRoute);
                 }
             }
@@ -445,7 +445,7 @@ class Route implements \ArrayAccess
 
         $return = [];
 
-        foreach($params as $param) {
+        foreach ($params as $param) {
             $return[$this->decode($param[0])] = $this->decode(Arr::get($param, 1));
         }
 
@@ -482,7 +482,7 @@ class Route implements \ArrayAccess
                 $delimiter = $this->getDelimiter();
 
                 // Need to make double encoding and then decode values
-                $params = Arr::each($params, function($value, $key) {
+                $params = Arr::each($params, function ($value, $key) {
                     return [$this->encode($value), $this->encode($key)];
                 });
 
@@ -537,7 +537,7 @@ class Route implements \ArrayAccess
 
             $compiled = [];
 
-            foreach($parts as $key => $remain) {
+            foreach ($parts as $key => $remain) {
                 if (array_key_exists($key, $matches[0])) {
                     if ($param = $matches[$paramKey][$key]) {
                         list($paramName, $paramDefault) = $this->splitParam($param);
@@ -608,7 +608,7 @@ class Route implements \ArrayAccess
 
     public function setName($name)
     {
-        $this->name = (string)$name;
+        $this->name = (string) $name;
 
         return $this;
     }
@@ -620,7 +620,7 @@ class Route implements \ArrayAccess
 
     public function setType($name)
     {
-        $this->type = (string)$name;
+        $this->type = (string) $name;
 
         return $this;
     }
@@ -632,7 +632,7 @@ class Route implements \ArrayAccess
 
     public function setHost($name)
     {
-        $this->host = (string)$name;
+        $this->host = (string) $name;
 
         return $this;
     }
@@ -645,7 +645,7 @@ class Route implements \ArrayAccess
     public function strict($type = null)
     {
         if (func_num_args()) {
-            $this->strict = (bool)$type;
+            $this->strict = (bool) $type;
 
             return $this;
         }
@@ -656,7 +656,7 @@ class Route implements \ArrayAccess
     public function encodeValues($type = null)
     {
         if (func_num_args()) {
-            $this->encodeValues = (bool)$type;
+            $this->encodeValues = (bool) $type;
 
             return $this;
         }
@@ -666,7 +666,7 @@ class Route implements \ArrayAccess
 
     public function setDelimiter($delimiter)
     {
-        $this->delimiter = (string)$delimiter;
+        $this->delimiter = (string) $delimiter;
 
         return $this;
     }
@@ -679,7 +679,7 @@ class Route implements \ArrayAccess
     public function regexMatchDelimiter($type = null)
     {
         if (func_num_args()) {
-            $this->regexMatchDelimiter = (bool)$type;
+            $this->regexMatchDelimiter = (bool) $type;
 
             return $this;
         }
@@ -739,7 +739,7 @@ class Route implements \ArrayAccess
 
     public function setFormat($format)
     {
-        $this->format = (string)$format;
+        $this->format = (string) $format;
 
         return $this;
     }
