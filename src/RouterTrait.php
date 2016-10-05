@@ -77,7 +77,7 @@ trait RouterTrait
 
     public function findRoute($name)
     {
-        foreach($this->routes as $route) {
+        foreach ($this->routes as $route) {
             if ($routeName = $route->getName() and $routeName == $name) {
                 return $route;
             }
@@ -111,7 +111,7 @@ trait RouterTrait
 
     public function hasRoutes()
     {
-        return (bool)$this->routes;
+        return (bool) $this->routes;
     }
 
     public function createRoute($format, $action, array $settings = [])
@@ -131,7 +131,7 @@ trait RouterTrait
 
     public function dispatchPath($path, &$foundRoute = null)
     {
-        foreach($this->routes as $route) {
+        foreach ($this->routes as $route) {
             if ($matchedRoute = $route->match($path)) {
                 $foundRoute = $matchedRoute;
 
@@ -183,7 +183,7 @@ trait RouterTrait
 
     public function bindOutParams(array $params)
     {
-        foreach($params as $name => &$value) {
+        foreach ($params as $name => &$value) {
             $value = $this->getBoundOutParam($name, $params);
         }
         unset($value);
@@ -227,7 +227,7 @@ trait RouterTrait
 
     public function bindInParams(array $params)
     {
-        foreach($params as $name => &$value) {
+        foreach ($params as $name => &$value) {
             $value = $this->getBoundInParam($name, $params);
         }
         unset($value);
