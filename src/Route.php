@@ -2,11 +2,10 @@
 
 namespace Greg\Router;
 
-use Greg\Support\Accessor\AccessorTrait;
 use Greg\Support\Accessor\ArrayAccessTrait;
 use Greg\Support\Arr;
 use Greg\Support\Http\Request;
-use Greg\Support\InternalTrait;
+use Greg\Support\Obj;
 use Greg\Support\Regex;
 use Greg\Support\Regex\InNamespaceRegex;
 use Greg\Support\Str;
@@ -14,7 +13,7 @@ use Greg\Support\Url;
 
 class Route implements \ArrayAccess
 {
-    use AccessorTrait, ArrayAccessTrait, RouterTrait, InternalTrait;
+    use ArrayAccessTrait, RouterTrait;
 
     const TYPE_GET = 'get';
 
@@ -251,7 +250,7 @@ class Route implements \ArrayAccess
     protected function execBeforeMiddleware($middleware)
     {
         if (method_exists($middleware, 'routerBeforeMiddleware')) {
-            return $this->callCallableWith([$middleware, 'routerBeforeMiddleware'], $this);
+            return Obj::callCallableWith([$middleware, 'routerBeforeMiddleware'], $this);
         }
 
         return true;
@@ -260,7 +259,7 @@ class Route implements \ArrayAccess
     protected function execAfterMiddleware($middleware)
     {
         if (method_exists($middleware, 'routerAfterMiddleware')) {
-            return $this->callCallableWith([$middleware, 'routerAfterMiddleware'], $this);
+            return Obj::callCallableWith([$middleware, 'routerAfterMiddleware'], $this);
         }
 
         return true;
@@ -269,7 +268,7 @@ class Route implements \ArrayAccess
     protected function dispatchAction($action, array $params = [])
     {
         if (is_callable($action)) {
-            return $this->callCallable($action, $params + $this->params() + $this->getDefaultParams(), $this);
+            return Obj::callCallable($action, $params + $this->params() + $this->getDefaultParams(), $this);
         }
 
         return null;
@@ -357,7 +356,7 @@ class Route implements \ArrayAccess
                 $matchedParams = $params;
 
                 foreach ($this->onMatch as $callable) {
-                    $this->callCallableWith($callable, $matchedRoute);
+                    Obj::callCallableWith($callable, $matchedRoute);
                 }
             }
 

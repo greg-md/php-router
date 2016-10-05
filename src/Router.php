@@ -2,11 +2,9 @@
 
 namespace Greg\Router;
 
-use Greg\Support\InternalTrait;
-
 class Router
 {
-    use RouterTrait, InternalTrait;
+    use RouterTrait;
 
     public function createRoute($format, $action, array $settings = [])
     {

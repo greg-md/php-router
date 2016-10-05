@@ -3,6 +3,7 @@
 namespace Greg\Router;
 
 use Greg\Support\Arr;
+use Greg\Support\Obj;
 
 trait RouterTrait
 {
@@ -63,7 +64,7 @@ trait RouterTrait
 
         $route->strict(false);
 
-        $this->callCallableWith($callable, $route);
+        call_user_func_array($callable, Obj::getCallableMixedArgs($callable, [$route]));
 
         return $route;
     }
@@ -171,7 +172,7 @@ trait RouterTrait
         }
 
         if ($binder = $this->getBoundOut($name)) {
-            $value = is_callable($binder) ? $this->callCallable($binder, $params) : $binder;
+            $value = is_callable($binder) ? call_user_func_array($binder, [$params]) : $binder;
 
             $this->boundOutParams[$name] = $value;
         } else {
@@ -215,7 +216,7 @@ trait RouterTrait
         }
 
         if ($binder = $this->getBoundIn($name)) {
-            $value = $this->callCallable($binder, $params);
+            $value = call_user_func_array($binder, [$params]);
 
             $this->boundInParams[$name] = $value;
         } else {
@@ -246,8 +247,4 @@ trait RouterTrait
     {
         return $this->errorAction;
     }
-
-    abstract protected function callCallable(callable $callable, ...$args);
-
-    abstract protected function callCallableWith(callable $callable, ...$args);
 }
