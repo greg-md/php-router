@@ -5,6 +5,7 @@ namespace Greg\Router;
 use Greg\Support\Accessor\ArrayAccessTrait;
 use Greg\Support\Arr;
 use Greg\Support\Http\Request;
+use Greg\Support\IoC\IoCManagerInterface;
 use Greg\Support\Obj;
 use Greg\Support\Regex;
 use Greg\Support\Regex\InNamespaceRegex;
@@ -63,18 +64,24 @@ class Route implements \ArrayAccess
      */
     protected $router = null;
 
-    public function __construct($format, $action)
+    public function __construct($format, callable $action = null, IoCManagerInterface $ioCManager = null)
     {
         $this->setFormat($format);
 
-        $this->setAction($action);
+        if ($action) {
+            $this->setAction($action);
+        }
+
+        if ($ioCManager) {
+            $this->setIoCManager($ioCManager);
+        }
 
         return $this;
     }
 
-    public function createRoute($format, $action, array $settings = [])
+    public function createRoute($format, callable $action = null)
     {
-        return $this->_createRoute($format, $action, $settings)->setParent($this);
+        return (new Route($format, $action, $this->getIoCManager()))->setParent($this);
     }
 
     protected function regexPattern()
@@ -186,7 +193,11 @@ class Route implements \ArrayAccess
         try {
             $this->runBeforeMiddleware();
 
-            $result = $this->dispatchAction($this->getAction(), $params);
+            if ($action = $this->getAction()) {
+                $result = $this->dispatchAction($action, $params);
+            } else {
+                $result = null;
+            }
 
             $this->runAfterMiddleware();
 
@@ -265,19 +276,15 @@ class Route implements \ArrayAccess
         return true;
     }
 
-    protected function dispatchAction($action, array $params = [])
+    protected function dispatchAction(callable $action, array $params = [])
     {
-        if (is_callable($action)) {
-            return Obj::callCallable($action, $params + $this->params() + $this->getDefaultParams(), $this);
-        }
-
-        return null;
+        return Obj::callCallable($action, $params + $this->params() + $this->getDefaultParams(), $this);
     }
 
     protected function dispatchException(\Exception $e)
     {
         if ($errorAction = $this->getErrorAction()) {
-            return $this->_createRoute('', $errorAction)->dispatch([
+            return (new Route('', $errorAction))->dispatch([
                 'exception' => $e,
             ]);
         }
@@ -748,7 +755,7 @@ class Route implements \ArrayAccess
         return $this->format;
     }
 
-    public function setAction($action)
+    public function setAction(callable $action)
     {
         $this->action = $action;
 
@@ -789,10 +796,10 @@ class Route implements \ArrayAccess
         return $this;
     }
 
-    public function cleanParams($key = null)
+    public function getCleanParams($key = null)
     {
         if (func_num_args()) {
-            return array_key_exists($key, $this->cleanParams) ? $this->cleanParams[$key] : null;
+            return Arr::getRef($this->cleanParams, $key);
         }
 
         return $this->cleanParams;

@@ -3,10 +3,13 @@
 namespace Greg\Router;
 
 use Greg\Support\Arr;
+use Greg\Support\IoC\IoCManagerAccessorTrait;
 use Greg\Support\Obj;
 
 trait RouterTrait
 {
+    use IoCManagerAccessorTrait;
+
     /**
      * @var Route[]
      */
@@ -22,58 +25,51 @@ trait RouterTrait
 
     protected $errorAction = null;
 
-    public function any($format, $action, array $settings = [])
+    public function any($format, callable $action = null)
     {
-        $settings['type'] = null;
-
-        return $this->setRoute($format, $action, $settings);
+        return $this->setRoute($format, $action);
     }
 
-    public function post($format, $action, array $settings = [])
+    public function post($format, callable $action = null)
     {
-        $settings['type'] = Route::TYPE_POST;
-
-        return $this->setRoute($format, $action, $settings);
+        return $this->setRoute($format, $action)->setType(Route::TYPE_POST);
     }
 
-    public function get($format, $action, $settings = [])
+    public function get($format, callable $action = null)
     {
-        if (is_scalar($settings)) {
-            $settings = ['name' => $settings];
-        }
-
-        $settings['type'] = Route::TYPE_GET;
-
-        return $this->setRoute($format, $action, $settings);
+        return $this->setRoute($format, $action)->setType(Route::TYPE_GET);
     }
 
-    public function hidden($format, $name, array $settings = [])
+    public function hidden($format, $name)
     {
-        $settings['name'] = $name;
-
-        $settings['type'] = Route::TYPE_HIDDEN;
-
-        return $this->setRoute($format, null, $settings);
+        return $this->setRoute($format)->setType(Route::TYPE_HIDDEN)->setName($name);
     }
 
-    public function group($format, callable $callable, array $settings = [])
+    public function group($format, callable $callable)
     {
-        $settings['type'] = Route::TYPE_GROUP;
-
-        $route = $this->setRoute($format, null, $settings);
+        $route = $this->setRoute($format)->setType(Route::TYPE_GROUP);
 
         $route->strict(false);
 
-        call_user_func_array($callable, Obj::getCallableMixedArgs($callable, [$route]));
+        if ($ioc = $this->getIoCManager()) {
+            $ioc->callCallableWith($callable, $route);
+        } else {
+            Obj::callCallableWith($callable, $route);
+        }
 
         return $route;
     }
 
-    public function setRoute($format, $action, array $settings = null)
+    public function setRoute($format, callable $action = null)
     {
-        $this->routes[] = $route = $this->createRoute($format, $action, $settings);
+        $this->routes[] = $route = $this->createRoute($format, $action);
 
         return $route;
+    }
+
+    public function createRoute($format, callable $action = null)
+    {
+        return new Route($format, $action, $this->getIoCManager());
     }
 
     public function findRoute($name)
@@ -115,32 +111,20 @@ trait RouterTrait
         return (bool) $this->routes;
     }
 
-    public function createRoute($format, $action, array $settings = [])
-    {
-        return $this->_createRoute($format, $action, $settings);
-    }
-
-    protected function _createRoute($format, $action, array $settings = [])
-    {
-        return $this->newRoute($format, $action, $settings);
-    }
-
-    protected function newRoute($format, $action, array $settings = [])
-    {
-        return new Route($format, $action, $settings);
-    }
-
-    public function dispatchPath($path, &$foundRoute = null)
+    public function findRouteByPath($path)
     {
         foreach ($this->routes as $route) {
-            if ($matchedRoute = $route->match($path)) {
-                $foundRoute = $matchedRoute;
-
-                return $matchedRoute->dispatch();
+            if ($route->match($path)) {
+                return $route;
             }
         }
 
         return null;
+    }
+
+    public function dispatchPath($path)
+    {
+        return $this->findRouteByPath($path)->dispatch();
     }
 
     public function fetchRoute($routeName, array $params = [], $full = false)
@@ -236,7 +220,7 @@ trait RouterTrait
         return $params;
     }
 
-    public function setErrorAction($action)
+    public function setErrorAction(callable $action)
     {
         $this->errorAction = $action;
 
