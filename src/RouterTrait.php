@@ -47,7 +47,9 @@ trait RouterTrait
 
     public function group($format, callable $callable)
     {
-        $route = $this->setRoute($format)->setType(Route::TYPE_GROUP);
+        $route = $this->setRoute($format);
+
+        $route->setType(Route::TYPE_GROUP);
 
         $route->strict(false);
 
@@ -114,8 +116,8 @@ trait RouterTrait
     public function findRouteByPath($path)
     {
         foreach ($this->routes as $route) {
-            if ($route->match($path)) {
-                return $route;
+            if ($matchedRoute = $route->match($path)) {
+                return $matchedRoute;
             }
         }
 

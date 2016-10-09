@@ -2,7 +2,7 @@
 
 namespace Greg\Router;
 
-use Greg\Support\Accessor\ArrayAccessTrait;
+use Greg\Support\Accessor\AccessorTrait;
 use Greg\Support\Arr;
 use Greg\Support\Http\Request;
 use Greg\Support\IoC\IoCManagerInterface;
@@ -14,7 +14,7 @@ use Greg\Support\Url;
 
 class Route implements \ArrayAccess
 {
-    use ArrayAccessTrait, RouterTrait;
+    use AccessorTrait, RouterTrait;
 
     const TYPE_GET = 'get';
 
@@ -261,6 +261,10 @@ class Route implements \ArrayAccess
     protected function execBeforeMiddleware($middleware)
     {
         if (method_exists($middleware, 'routerBeforeMiddleware')) {
+            if ($ioc = $this->getIoCManager()) {
+                return $ioc->callCallableWith([$middleware, 'routerBeforeMiddleware'], $this);
+            }
+
             return Obj::callCallableWith([$middleware, 'routerBeforeMiddleware'], $this);
         }
 
@@ -270,6 +274,10 @@ class Route implements \ArrayAccess
     protected function execAfterMiddleware($middleware)
     {
         if (method_exists($middleware, 'routerAfterMiddleware')) {
+            if ($ioc = $this->getIoCManager()) {
+                return $ioc->callCallableWith([$middleware, 'routerAfterMiddleware'], $this);
+            }
+
             return Obj::callCallableWith([$middleware, 'routerAfterMiddleware'], $this);
         }
 
@@ -278,7 +286,13 @@ class Route implements \ArrayAccess
 
     protected function dispatchAction(callable $action, array $params = [])
     {
-        return Obj::callCallable($action, $params + $this->params() + $this->getDefaultParams(), $this);
+        $params += $this->params() + $this->getDefaultParams();
+
+        if ($ioc = $this->getIoCManager()) {
+            return $ioc->callCallableWith($action, $params, $this);
+        }
+
+        return Obj::callCallableWith($action, $params, $this);
     }
 
     protected function dispatchException(\Exception $e)
@@ -317,6 +331,8 @@ class Route implements \ArrayAccess
                         break;
                     }
                 }
+
+                $_GET['test'] = true;
             } else {
                 $matchedRoute = $this;
             }
@@ -363,7 +379,11 @@ class Route implements \ArrayAccess
                 $matchedParams = $params;
 
                 foreach ($this->onMatch as $callable) {
-                    Obj::callCallableWith($callable, $matchedRoute);
+                    if ($ioc = $this->getIoCManager()) {
+                        $ioc->callCallableWith($callable, $matchedRoute);
+                    } else {
+                        Obj::callCallableWith($callable, $matchedRoute);
+                    }
                 }
             }
 
@@ -601,13 +621,13 @@ class Route implements \ArrayAccess
             $compiled = $format;
         }
 
-        $defaultParams and Arr::del($params, $defaultParams);
+        $defaultParams and Arr::delRef($params, $defaultParams);
 
         if (!$required and !$usedParams) {
             return null;
         }
 
-        $usedParams and Arr::del($params, $usedParams);
+        $usedParams and Arr::delRef($params, $usedParams);
 
         return [$compiled, $usedParams];
     }
@@ -827,5 +847,25 @@ class Route implements \ArrayAccess
     public function getRouter()
     {
         return $this->router;
+    }
+
+    public function offsetSet($offset, $value)
+    {
+        return $this->setToAccessor($offset, $value);
+    }
+
+    public function offsetGet($offset)
+    {
+        return $this->getFromAccessor($offset);
+    }
+
+    public function offsetExists($offset)
+    {
+        return $this->inAccessor($offset);
+    }
+
+    public function offsetUnset($offset)
+    {
+        return $this->removeFromAccessor($offset);
     }
 }
