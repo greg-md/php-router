@@ -95,7 +95,7 @@ class Route implements \ArrayAccess
 
     public function createRoute($format, $action = null)
     {
-        return (new Route($format, $action, $this->getIoCManager()))->setParent($this);
+        return (new self($format, $action, $this->getIoCManager()))->setParent($this);
     }
 
     protected function regexPattern()
@@ -334,7 +334,7 @@ class Route implements \ArrayAccess
     protected function dispatchException(\Exception $e)
     {
         if ($errorAction = $this->getErrorAction()) {
-            return (new Route('', $errorAction))->dispatch([
+            return (new self('', $errorAction))->dispatch([
                 'exception' => $e,
             ]);
         }
