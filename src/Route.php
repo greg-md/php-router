@@ -6,7 +6,6 @@ use Greg\Support\Accessor\AccessorTrait;
 use Greg\Support\Arr;
 use Greg\Support\Http\Request;
 use Greg\Support\IoC\IoCManagerInterface;
-use Greg\Support\Obj;
 use Greg\Support\Regex;
 use Greg\Support\Regex\InNamespaceRegex;
 use Greg\Support\Str;
