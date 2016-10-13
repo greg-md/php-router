@@ -25,19 +25,56 @@ trait RouterTrait
 
     protected $errorAction = null;
 
-    public function any($format, callable $action = null)
+    protected $dispatcher = null;
+
+    public function any($format, $action = null)
     {
         return $this->setRoute($format, $action);
     }
 
-    public function post($format, callable $action = null)
+    public function get($format, $action = null)
+    {
+        return $this->setRoute($format, $action)->setType(Route::TYPE_GET);
+    }
+
+    public function head($format, $action = null)
+    {
+        return $this->setRoute($format, $action)->setType(Route::TYPE_HEAD);
+    }
+
+    public function post($format, $action = null)
     {
         return $this->setRoute($format, $action)->setType(Route::TYPE_POST);
     }
 
-    public function get($format, callable $action = null)
+    public function put($format, $action = null)
     {
-        return $this->setRoute($format, $action)->setType(Route::TYPE_GET);
+        return $this->setRoute($format, $action)->setType(Route::TYPE_PUT);
+    }
+
+    public function delete($format, $action = null)
+    {
+        return $this->setRoute($format, $action)->setType(Route::TYPE_DELETE);
+    }
+
+    public function connect($format, $action = null)
+    {
+        return $this->setRoute($format, $action)->setType(Route::TYPE_CONNECT);
+    }
+
+    public function options($format, $action = null)
+    {
+        return $this->setRoute($format, $action)->setType(Route::TYPE_OPTIONS);
+    }
+
+    public function trace($format, $action = null)
+    {
+        return $this->setRoute($format, $action)->setType(Route::TYPE_TRACE);
+    }
+
+    public function patch($format, $action = null)
+    {
+        return $this->setRoute($format, $action)->setType(Route::TYPE_PATCH);
     }
 
     public function hidden($format, $name)
@@ -53,23 +90,28 @@ trait RouterTrait
 
         $route->strict(false);
 
-        if ($ioc = $this->getIoCManager()) {
-            $ioc->callCallableWith($callable, $route);
-        } else {
-            Obj::callCallableWith($callable, $route);
-        }
+        $this->callCallableWith($callable, $route);
 
         return $route;
     }
 
-    public function setRoute($format, callable $action = null)
+    protected function callCallableWith(callable $callable, $param = null, $_ = null)
+    {
+        if ($ioc = $this->getIoCManager()) {
+            return $ioc->callCallableWith(...func_get_args());
+        }
+
+        return Obj::callCallableWith(...func_get_args());
+    }
+
+    public function setRoute($format, $action = null)
     {
         $this->routes[] = $route = $this->createRoute($format, $action);
 
         return $route;
     }
 
-    public function createRoute($format, callable $action = null)
+    public function createRoute($format, $action = null)
     {
         return new Route($format, $action, $this->getIoCManager());
     }
@@ -158,7 +200,7 @@ trait RouterTrait
         }
 
         if ($binder = $this->getBoundOut($name)) {
-            $value = is_callable($binder) ? call_user_func_array($binder, [$params]) : $binder;
+            $value = is_callable($binder) ? $this->callCallableWith($binder, $params) : $binder;
 
             $this->boundOutParams[$name] = $value;
         } else {
@@ -202,7 +244,7 @@ trait RouterTrait
         }
 
         if ($binder = $this->getBoundIn($name)) {
-            $value = call_user_func_array($binder, [$params]);
+            $value = $this->callCallableWith($binder, $params);
 
             $this->boundInParams[$name] = $value;
         } else {
@@ -222,7 +264,7 @@ trait RouterTrait
         return $params;
     }
 
-    public function setErrorAction(callable $action)
+    public function setErrorAction($action)
     {
         $this->errorAction = $action;
 
@@ -232,5 +274,17 @@ trait RouterTrait
     public function getErrorAction()
     {
         return $this->errorAction;
+    }
+
+    public function setDispatcher(callable $callable)
+    {
+        $this->dispatcher = $callable;
+
+        return $this;
+    }
+
+    public function getDispatcher()
+    {
+        return $this->dispatcher;
     }
 }

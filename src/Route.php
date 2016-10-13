@@ -18,7 +18,21 @@ class Route implements \ArrayAccess
 
     const TYPE_GET = 'get';
 
+    const TYPE_HEAD = 'head';
+
     const TYPE_POST = 'post';
+
+    const TYPE_PUT = 'put';
+
+    const TYPE_DELETE = 'delete';
+
+    const TYPE_CONNECT = 'connect';
+
+    const TYPE_OPTIONS = 'options';
+
+    const TYPE_TRACE = 'trace';
+
+    const TYPE_PATCH = 'patch';
 
     const TYPE_HIDDEN = 'hidden';
 
@@ -64,7 +78,7 @@ class Route implements \ArrayAccess
      */
     protected $router = null;
 
-    public function __construct($format, callable $action = null, IoCManagerInterface $ioCManager = null)
+    public function __construct($format, $action = null, IoCManagerInterface $ioCManager = null)
     {
         $this->setFormat($format);
 
@@ -79,7 +93,7 @@ class Route implements \ArrayAccess
         return $this;
     }
 
-    public function createRoute($format, callable $action = null)
+    public function createRoute($format, $action = null)
     {
         return (new Route($format, $action, $this->getIoCManager()))->setParent($this);
     }
@@ -193,11 +207,7 @@ class Route implements \ArrayAccess
         try {
             $this->runBeforeMiddleware();
 
-            if ($action = $this->getAction()) {
-                $result = $this->dispatchAction($action, $params);
-            } else {
-                $result = null;
-            }
+            $result = $this->dispatchAction($params);
 
             $this->runAfterMiddleware();
 
@@ -261,11 +271,7 @@ class Route implements \ArrayAccess
     protected function execBeforeMiddleware($middleware)
     {
         if (method_exists($middleware, 'routerBeforeMiddleware')) {
-            if ($ioc = $this->getIoCManager()) {
-                return $ioc->callCallableWith([$middleware, 'routerBeforeMiddleware'], $this);
-            }
-
-            return Obj::callCallableWith([$middleware, 'routerBeforeMiddleware'], $this);
+            return $this->callCallableWith([$middleware, 'routerBeforeMiddleware'], $this);
         }
 
         return true;
@@ -274,25 +280,55 @@ class Route implements \ArrayAccess
     protected function execAfterMiddleware($middleware)
     {
         if (method_exists($middleware, 'routerAfterMiddleware')) {
-            if ($ioc = $this->getIoCManager()) {
-                return $ioc->callCallableWith([$middleware, 'routerAfterMiddleware'], $this);
-            }
-
-            return Obj::callCallableWith([$middleware, 'routerAfterMiddleware'], $this);
+            return $this->callCallableWith([$middleware, 'routerAfterMiddleware'], $this);
         }
 
         return true;
     }
 
-    protected function dispatchAction(callable $action, array $params = [])
+    protected function dispatchAction(array $params = [])
     {
         $params += $this->params() + $this->getDefaultParams();
 
-        if ($ioc = $this->getIoCManager()) {
-            return $ioc->callCallableWith($action, $params, $this);
+        return $this->callCallableWith($this->getCallableAction(), $params, $this);
+    }
+
+    protected function getCallableAction()
+    {
+        $action = $this->getAction();
+
+        if (!is_callable($action)) {
+            if ($dispatcher = $this->getNearestDispatcher()) {
+                $action = $this->callCallableWith($dispatcher, $action);
+            }
         }
 
-        return Obj::callCallableWith($action, $params, $this);
+        if (!$action) {
+            throw new \Exception('Route action is undefined.');
+        }
+
+        if (!is_callable($action)) {
+            throw new \Exception('Route action is not callable.');
+        }
+
+        return $action;
+    }
+
+    public function getNearestDispatcher()
+    {
+        if ($dispatcher = $this->getDispatcher()) {
+            return $dispatcher;
+        }
+
+        if ($parent = $this->getParent()) {
+            return $parent->getNearestDispatcher();
+        }
+
+        if ($router = $this->getRouter()) {
+            return $router->getDispatcher();
+        }
+
+        return null;
     }
 
     protected function dispatchException(\Exception $e)
@@ -331,8 +367,6 @@ class Route implements \ArrayAccess
                         break;
                     }
                 }
-
-                $_GET['test'] = true;
             } else {
                 $matchedRoute = $this;
             }
@@ -379,11 +413,7 @@ class Route implements \ArrayAccess
                 $matchedParams = $params;
 
                 foreach ($this->onMatch as $callable) {
-                    if ($ioc = $this->getIoCManager()) {
-                        $ioc->callCallableWith($callable, $matchedRoute);
-                    } else {
-                        Obj::callCallableWith($callable, $matchedRoute);
-                    }
+                    $this->callCallableWith($callable, $matchedRoute);
                 }
             }
 
@@ -450,9 +480,44 @@ class Route implements \ArrayAccess
         return $this->getType() == static::TYPE_GET;
     }
 
+    public function isHead()
+    {
+        return $this->getType() == static::TYPE_HEAD;
+    }
+
     public function isPost()
     {
         return $this->getType() == static::TYPE_POST;
+    }
+
+    public function isPut()
+    {
+        return $this->getType() == static::TYPE_PUT;
+    }
+
+    public function isDelete()
+    {
+        return $this->getType() == static::TYPE_DELETE;
+    }
+
+    public function isConnect()
+    {
+        return $this->getType() == static::TYPE_CONNECT;
+    }
+
+    public function isOptions()
+    {
+        return $this->getType() == static::TYPE_OPTIONS;
+    }
+
+    public function isTrace()
+    {
+        return $this->getType() == static::TYPE_TRACE;
+    }
+
+    public function isPatch()
+    {
+        return $this->getType() == static::TYPE_PATCH;
     }
 
     public function isHidden()
@@ -775,7 +840,7 @@ class Route implements \ArrayAccess
         return $this->format;
     }
 
-    public function setAction(callable $action)
+    public function setAction($action)
     {
         $this->action = $action;
 
