@@ -108,8 +108,8 @@ trait RouterTrait
 
     protected function callCallableWith(callable $callable, ...$args)
     {
-        if ($callable = $this->getCallCallableWith()) {
-            return Obj::callCallable($callable, ...func_get_args());
+        if ($callCallableWith = $this->getCallCallableWith()) {
+            return Obj::callCallable($callCallableWith, ...func_get_args());
         }
 
         return Obj::callCallableWith(...func_get_args());
