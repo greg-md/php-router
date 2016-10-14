@@ -5,7 +5,6 @@ namespace Greg\Router;
 use Greg\Support\Accessor\AccessorTrait;
 use Greg\Support\Arr;
 use Greg\Support\Http\Request;
-use Greg\Support\IoC\IoCManagerInterface;
 use Greg\Support\Regex;
 use Greg\Support\Regex\InNamespaceRegex;
 use Greg\Support\Str;
@@ -77,7 +76,7 @@ class Route implements \ArrayAccess
      */
     protected $router = null;
 
-    public function __construct($format, $action = null, IoCManagerInterface $ioCManager = null)
+    public function __construct($format, $action = null)
     {
         $this->setFormat($format);
 
@@ -85,16 +84,12 @@ class Route implements \ArrayAccess
             $this->setAction($action);
         }
 
-        if ($ioCManager) {
-            $this->setIoCManager($ioCManager);
-        }
-
         return $this;
     }
 
     public function createRoute($format, $action = null)
     {
-        return (new self($format, $action, $this->getIoCManager()))->setParent($this);
+        return (new self($format, $action))->setParent($this);
     }
 
     protected function regexPattern()

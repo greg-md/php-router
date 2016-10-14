@@ -3,13 +3,10 @@
 namespace Greg\Router;
 
 use Greg\Support\Arr;
-use Greg\Support\IoC\IoCManagerAccessorTrait;
 use Greg\Support\Obj;
 
 trait RouterTrait
 {
-    use IoCManagerAccessorTrait;
-
     /**
      * @var Route[]
      */
@@ -26,6 +23,8 @@ trait RouterTrait
     protected $errorAction = null;
 
     protected $dispatcher = null;
+
+    protected $callCallableWith = null;
 
     public function any($format, $action = null)
     {
@@ -95,10 +94,22 @@ trait RouterTrait
         return $route;
     }
 
-    protected function callCallableWith(callable $callable, $param = null, $_ = null)
+    public function setCallCallableWith(callable $callable)
     {
-        if ($ioc = $this->getIoCManager()) {
-            return $ioc->callCallableWith(...func_get_args());
+        $this->callCallableWith = $callable;
+
+        return $this;
+    }
+
+    public function getCallCallableWith()
+    {
+        return $this->callCallableWith;
+    }
+
+    protected function callCallableWith(callable $callable, ...$args)
+    {
+        if ($callable = $this->getCallCallableWith()) {
+            return Obj::callCallable($callable, ...func_get_args());
         }
 
         return Obj::callCallableWith(...func_get_args());
@@ -113,7 +124,7 @@ trait RouterTrait
 
     public function createRoute($format, $action = null)
     {
-        return new Route($format, $action, $this->getIoCManager());
+        return new Route($format, $action);
     }
 
     public function findRoute($name)
