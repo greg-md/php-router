@@ -908,6 +908,23 @@ class Route implements \ArrayAccess
         return $this->router;
     }
 
+    public function getCallCallableWith()
+    {
+        if ($this->callCallableWith) {
+            return $this->callCallableWith;
+        }
+
+        if ($parent = $this->getParent()) {
+            return $parent->getCallCallableWith();
+        }
+
+        if ($router = $this->getRouter()) {
+            return $router->getCallCallableWith();
+        }
+
+        return null;
+    }
+
     public function offsetSet($offset, $value)
     {
         return $this->setToAccessor($offset, $value);
