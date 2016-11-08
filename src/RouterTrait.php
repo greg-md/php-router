@@ -24,8 +24,6 @@ trait RouterTrait
 
     protected $dispatcher = null;
 
-    protected $callCallableWith = null;
-
     public function any($format, $action = null)
     {
         return $this->setRoute($format, $action);
@@ -89,30 +87,9 @@ trait RouterTrait
 
         $route->strict(false);
 
-        $this->callCallableWith($callable, $route);
+        Obj::callCallableWith($callable, $route);
 
         return $route;
-    }
-
-    public function setCallCallableWith(callable $callable)
-    {
-        $this->callCallableWith = $callable;
-
-        return $this;
-    }
-
-    public function getCallCallableWith()
-    {
-        return $this->callCallableWith;
-    }
-
-    protected function callCallableWith(callable $callable, ...$args)
-    {
-        if ($callCallableWith = $this->getCallCallableWith()) {
-            return Obj::callCallable($callCallableWith, ...func_get_args());
-        }
-
-        return Obj::callCallableWith(...func_get_args());
     }
 
     public function setRoute($format, $action = null)
@@ -211,7 +188,7 @@ trait RouterTrait
         }
 
         if ($binder = $this->getBoundOut($name)) {
-            $value = is_callable($binder) ? $this->callCallableWith($binder, $params) : $binder;
+            $value = is_callable($binder) ? Obj::callCallableWith($binder, $params) : $binder;
 
             $this->boundOutParams[$name] = $value;
         } else {
@@ -255,7 +232,7 @@ trait RouterTrait
         }
 
         if ($binder = $this->getBoundIn($name)) {
-            $value = $this->callCallableWith($binder, $params);
+            $value = Obj::callCallableWith($binder, $params);
 
             $this->boundInParams[$name] = $value;
         } else {

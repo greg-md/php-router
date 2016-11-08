@@ -5,6 +5,7 @@ namespace Greg\Router;
 use Greg\Support\Accessor\AccessorTrait;
 use Greg\Support\Arr;
 use Greg\Support\Http\Request;
+use Greg\Support\Obj;
 use Greg\Support\Regex;
 use Greg\Support\Regex\InNamespaceRegex;
 use Greg\Support\Str;
@@ -265,7 +266,7 @@ class Route implements \ArrayAccess
     protected function execBeforeMiddleware($middleware)
     {
         if (method_exists($middleware, 'routerBeforeMiddleware')) {
-            return $this->callCallableWith([$middleware, 'routerBeforeMiddleware'], $this);
+            return Obj::callCallableWith([$middleware, 'routerBeforeMiddleware'], $this);
         }
 
         return true;
@@ -274,7 +275,7 @@ class Route implements \ArrayAccess
     protected function execAfterMiddleware($middleware)
     {
         if (method_exists($middleware, 'routerAfterMiddleware')) {
-            return $this->callCallableWith([$middleware, 'routerAfterMiddleware'], $this);
+            return Obj::callCallableWith([$middleware, 'routerAfterMiddleware'], $this);
         }
 
         return true;
@@ -284,7 +285,7 @@ class Route implements \ArrayAccess
     {
         $params += $this->params() + $this->getDefaultParams();
 
-        return $this->callCallableWith($this->getCallableAction(), $params, $this);
+        return Obj::callCallableWith($this->getCallableAction(), $params, $this);
     }
 
     protected function getCallableAction()
@@ -293,7 +294,7 @@ class Route implements \ArrayAccess
 
         if (!is_callable($action)) {
             if ($dispatcher = $this->getNearestDispatcher()) {
-                $action = $this->callCallableWith($dispatcher, $action);
+                $action = Obj::callCallableWith($dispatcher, $action);
             }
         }
 
@@ -407,7 +408,7 @@ class Route implements \ArrayAccess
                 $matchedParams = $params;
 
                 foreach ($this->onMatch as $callable) {
-                    $this->callCallableWith($callable, $matchedRoute);
+                    Obj::callCallableWith($callable, $matchedRoute);
                 }
             }
 
@@ -906,23 +907,6 @@ class Route implements \ArrayAccess
     public function getRouter()
     {
         return $this->router;
-    }
-
-    public function getCallCallableWith()
-    {
-        if ($this->callCallableWith) {
-            return $this->callCallableWith;
-        }
-
-        if ($parent = $this->getParent()) {
-            return $parent->getCallCallableWith();
-        }
-
-        if ($router = $this->getRouter()) {
-            return $router->getCallCallableWith();
-        }
-
-        return null;
     }
 
     public function offsetSet($offset, $value)
