@@ -3,6 +3,7 @@
 namespace Greg\Router;
 
 use Greg\Support\Arr;
+use Greg\Support\Http\Request;
 use Greg\Support\Obj;
 
 trait RouterTrait
@@ -31,47 +32,47 @@ trait RouterTrait
 
     public function get($format, $action = null)
     {
-        return $this->setRoute($format, $action)->setType(Route::TYPE_GET);
+        return $this->setRoute($format, $action)->setType(Request::TYPE_GET);
     }
 
     public function head($format, $action = null)
     {
-        return $this->setRoute($format, $action)->setType(Route::TYPE_HEAD);
+        return $this->setRoute($format, $action)->setType(Request::TYPE_HEAD);
     }
 
     public function post($format, $action = null)
     {
-        return $this->setRoute($format, $action)->setType(Route::TYPE_POST);
+        return $this->setRoute($format, $action)->setType(Request::TYPE_POST);
     }
 
     public function put($format, $action = null)
     {
-        return $this->setRoute($format, $action)->setType(Route::TYPE_PUT);
+        return $this->setRoute($format, $action)->setType(Request::TYPE_PUT);
     }
 
     public function delete($format, $action = null)
     {
-        return $this->setRoute($format, $action)->setType(Route::TYPE_DELETE);
+        return $this->setRoute($format, $action)->setType(Request::TYPE_DELETE);
     }
 
     public function connect($format, $action = null)
     {
-        return $this->setRoute($format, $action)->setType(Route::TYPE_CONNECT);
+        return $this->setRoute($format, $action)->setType(Request::TYPE_CONNECT);
     }
 
     public function options($format, $action = null)
     {
-        return $this->setRoute($format, $action)->setType(Route::TYPE_OPTIONS);
+        return $this->setRoute($format, $action)->setType(Request::TYPE_OPTIONS);
     }
 
     public function trace($format, $action = null)
     {
-        return $this->setRoute($format, $action)->setType(Route::TYPE_TRACE);
+        return $this->setRoute($format, $action)->setType(Request::TYPE_TRACE);
     }
 
     public function patch($format, $action = null)
     {
-        return $this->setRoute($format, $action)->setType(Route::TYPE_PATCH);
+        return $this->setRoute($format, $action)->setType(Request::TYPE_PATCH);
     }
 
     public function hidden($format, $name)

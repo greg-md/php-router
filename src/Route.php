@@ -13,29 +13,11 @@ use Greg\Support\Url;
 
 class Route implements \ArrayAccess
 {
-    use AccessorTrait, RouterTrait;
-
-    const TYPE_GET = 'get';
-
-    const TYPE_HEAD = 'head';
-
-    const TYPE_POST = 'post';
-
-    const TYPE_PUT = 'put';
-
-    const TYPE_DELETE = 'delete';
-
-    const TYPE_CONNECT = 'connect';
-
-    const TYPE_OPTIONS = 'options';
-
-    const TYPE_TRACE = 'trace';
-
-    const TYPE_PATCH = 'patch';
-
     const TYPE_HIDDEN = 'hidden';
 
     const TYPE_GROUP = 'group';
+
+    use AccessorTrait, RouterTrait;
 
     protected $format = null;
 
@@ -339,7 +321,7 @@ class Route implements \ArrayAccess
 
     public function match($path, array &$matchedParams = [])
     {
-        if ($this->isHidden()) {
+        if ($this->isHidden() or !($this->isGroup() or $this->isAny() or Request::method() == $this->getType())) {
             return false;
         }
 
@@ -472,47 +454,52 @@ class Route implements \ArrayAccess
 
     public function isGet()
     {
-        return $this->getType() == static::TYPE_GET;
+        return $this->getType() == Request::TYPE_GET;
     }
 
     public function isHead()
     {
-        return $this->getType() == static::TYPE_HEAD;
+        return $this->getType() == Request::TYPE_HEAD;
     }
 
     public function isPost()
     {
-        return $this->getType() == static::TYPE_POST;
+        return $this->getType() == Request::TYPE_POST;
     }
 
     public function isPut()
     {
-        return $this->getType() == static::TYPE_PUT;
+        return $this->getType() == Request::TYPE_PUT;
     }
 
     public function isDelete()
     {
-        return $this->getType() == static::TYPE_DELETE;
+        return $this->getType() == Request::TYPE_DELETE;
     }
 
     public function isConnect()
     {
-        return $this->getType() == static::TYPE_CONNECT;
+        return $this->getType() == Request::TYPE_CONNECT;
     }
 
     public function isOptions()
     {
-        return $this->getType() == static::TYPE_OPTIONS;
+        return $this->getType() == Request::TYPE_OPTIONS;
     }
 
     public function isTrace()
     {
-        return $this->getType() == static::TYPE_TRACE;
+        return $this->getType() == Request::TYPE_TRACE;
     }
 
     public function isPatch()
     {
-        return $this->getType() == static::TYPE_PATCH;
+        return $this->getType() == Request::TYPE_PATCH;
+    }
+
+    public function isAny()
+    {
+        return !$this->getType();
     }
 
     public function isHidden()
