@@ -184,7 +184,9 @@ class Route implements \ArrayAccess
         try {
             $this->runBeforeMiddleware();
 
-            $result = $this->dispatchAction($params);
+            $params += $this->params() + $this->getDefaultParams();
+
+            $result = $this->dispatchAction($this->getAction(), $params);
 
             $this->runAfterMiddleware();
 
@@ -263,34 +265,6 @@ class Route implements \ArrayAccess
         return true;
     }
 
-    protected function dispatchAction(array $params = [])
-    {
-        $params += $this->params() + $this->getDefaultParams();
-
-        return Obj::callCallableWith($this->getCallableAction(), $params, $this);
-    }
-
-    protected function getCallableAction()
-    {
-        $action = $this->getAction();
-
-        if (!is_callable($action)) {
-            if ($dispatcher = $this->getNearestDispatcher()) {
-                $action = Obj::callCallableWith($dispatcher, $action);
-            }
-        }
-
-        if (!$action) {
-            throw new \Exception('Route action is undefined.');
-        }
-
-        if (!is_callable($action)) {
-            throw new \Exception('Route action is not callable.');
-        }
-
-        return $action;
-    }
-
     public function getNearestDispatcher()
     {
         if ($dispatcher = $this->getDispatcher()) {
@@ -306,17 +280,6 @@ class Route implements \ArrayAccess
         }
 
         return null;
-    }
-
-    protected function dispatchException(\Exception $e)
-    {
-        if ($errorAction = $this->getErrorAction()) {
-            return (new self('', $errorAction))->dispatch([
-                'exception' => $e,
-            ]);
-        }
-
-        throw $e;
     }
 
     public function match($path, array &$matchedParams = [])

@@ -253,6 +253,43 @@ trait RouterTrait
         return $params;
     }
 
+    public function dispatchAction($action, array $params = [])
+    {
+        if (!is_callable($action)) {
+            if ($dispatcher = $this->getNearestDispatcher()) {
+                $action = Obj::callCallableWith($dispatcher, $action);
+            }
+        }
+
+        if (!$action) {
+            throw new \Exception('Route action is undefined.');
+        }
+
+        if (!is_callable($action)) {
+            throw new \Exception('Route action is not callable.');
+        }
+
+        return Obj::callCallableWith($action, $params, $this);
+    }
+
+    public function dispatchException(\Exception $e)
+    {
+        if ($errorAction = $this->getErrorAction()) {
+            return $this->dispatchAction($errorAction, ['exception' => $e]);
+        }
+
+        throw $e;
+    }
+
+    protected function getNearestDispatcher()
+    {
+        if ($dispatcher = $this->getDispatcher()) {
+            return $dispatcher;
+        }
+
+        return null;
+    }
+
     public function setErrorAction($action)
     {
         $this->errorAction = $action;
