@@ -172,12 +172,12 @@ trait RouterTrait
         return $this;
     }
 
-    protected function hasBoundOut($name)
+    public function hasBoundOut($name)
     {
         return array_key_exists($name, $this->bindersOut);
     }
 
-    protected function getBoundOut($name)
+    public function getBoundOut($name)
     {
         return $this->hasBoundOut($name) ? $this->bindersOut[$name] : null;
     }
@@ -216,12 +216,12 @@ trait RouterTrait
         return $this;
     }
 
-    protected function hasBoundIn($name)
+    public function hasBoundIn($name)
     {
         return array_key_exists($name, $this->bindersIn);
     }
 
-    protected function getBoundIn($name)
+    public function getBoundIn($name)
     {
         return $this->hasBoundIn($name) ? $this->bindersIn[$name] : null;
     }
@@ -269,7 +269,9 @@ trait RouterTrait
             throw new \Exception('Route action is not callable.');
         }
 
-        return Obj::callCallableWith($action, $params, $this);
+        $request = new Request($params);
+
+        return Obj::callCallableWith($action, $this, $request, ...array_values($params));
     }
 
     public function dispatchException(\Exception $e)

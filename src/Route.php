@@ -342,6 +342,7 @@ class Route implements \ArrayAccess
 
                 $this->setParams($params);
 
+                /* Need to think about how to do it right.
                 if ($matchedRoute !== $this) {
                     $matchedRoute->setPath($path);
 
@@ -349,6 +350,7 @@ class Route implements \ArrayAccess
 
                     $matchedRoute->setParams($params);
                 }
+                */
 
                 $matchedParams = $params;
 
@@ -591,7 +593,8 @@ class Route implements \ArrayAccess
                                 if (!$required) {
                                     return null;
                                 }
-                                throw new \Exception('Param `' . $paramName . '` is required in route `' . ($this->getName() ?: $this->getFormat()) . '`.');
+
+                                throw new \Exception('Parameter `' . $paramName . '` is required in route `' . ($this->getName() ?: $this->getFormat()) . '`.');
                             }
 
                             $compiled[] = $this->encode($value);
