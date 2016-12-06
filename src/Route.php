@@ -634,13 +634,13 @@ class Route implements \ArrayAccess
             $compiled = $format;
         }
 
-        $defaultParams and Arr::delRef($params, $defaultParams);
+        $defaultParams and Arr::del($params, $defaultParams);
 
         if (!$required and !$usedParams) {
             return null;
         }
 
-        $usedParams and Arr::delRef($params, $usedParams);
+        $usedParams and Arr::del($params, $usedParams);
 
         return [$compiled, $usedParams];
     }
@@ -832,7 +832,7 @@ class Route implements \ArrayAccess
     public function getCleanParams($key = null)
     {
         if (func_num_args()) {
-            return Arr::getRef($this->cleanParams, $key);
+            return Arr::get($this->cleanParams, $key);
         }
 
         return $this->cleanParams;
