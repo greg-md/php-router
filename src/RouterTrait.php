@@ -77,7 +77,11 @@ trait RouterTrait
 
     public function hidden($format, $name)
     {
-        return $this->setRoute($format)->setType(Route::TYPE_HIDDEN)->setName($name);
+        $route = $this->setRoute($format);
+
+        $route->setType(Route::TYPE_HIDDEN)->setName($name);
+
+        return $route;
     }
 
     public function group($format, callable $callable)
@@ -269,9 +273,7 @@ trait RouterTrait
             throw new \Exception('Route action is not callable.');
         }
 
-        $request = new Request($params);
-
-        return Obj::callCallableWith($action, $this, $request, ...array_values($params));
+        return Obj::callCallableWith($action, $this, ...array_values($params));
     }
 
     public function dispatchException(\Exception $e)
