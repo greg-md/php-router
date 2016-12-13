@@ -186,7 +186,7 @@ class Route implements \ArrayAccess
 
             $params += $this->params() + $this->getDefaultParams();
 
-            $result = $this->dispatchAction($this->getAction(), $params);
+            $result = $this->dispatchAction($this->getAction(), ...$params);
 
             $this->runAfterMiddleware();
 
@@ -265,14 +265,31 @@ class Route implements \ArrayAccess
         return true;
     }
 
-    public function getNearestDispatcher()
+    public function getErrorAction()
     {
-        if ($dispatcher = $this->getDispatcher()) {
-            return $dispatcher;
+        if ($this->errorAction) {
+            return $this->errorAction;
         }
 
         if ($parent = $this->getParent()) {
-            return $parent->getNearestDispatcher();
+            return $parent->getErrorAction();
+        }
+
+        if ($router = $this->getRouter()) {
+            return $router->getErrorAction();
+        }
+
+        return null;
+    }
+
+    public function getDispatcher()
+    {
+        if ($this->dispatcher) {
+            return $this->dispatcher;
+        }
+
+        if ($parent = $this->getParent()) {
+            return $parent->getDispatcher();
         }
 
         if ($router = $this->getRouter()) {

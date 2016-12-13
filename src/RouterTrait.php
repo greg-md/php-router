@@ -257,10 +257,10 @@ trait RouterTrait
         return $params;
     }
 
-    public function dispatchAction($action, array $params = [])
+    public function dispatchAction($action, ...$params)
     {
         if (!is_callable($action)) {
-            if ($dispatcher = $this->getNearestDispatcher()) {
+            if ($dispatcher = $this->getDispatcher()) {
                 $action = Obj::callCallableWith($dispatcher, $action);
             }
         }
@@ -273,25 +273,16 @@ trait RouterTrait
             throw new \Exception('Route action is not callable.');
         }
 
-        return Obj::callCallableWith($action, $this, ...array_values($params));
+        return Obj::callCallableWith($action, $this, ...$params);
     }
 
     public function dispatchException(\Exception $e)
     {
         if ($errorAction = $this->getErrorAction()) {
-            return $this->dispatchAction($errorAction, ['exception' => $e]);
+            return $this->dispatchAction($errorAction, $e);
         }
 
         throw $e;
-    }
-
-    protected function getNearestDispatcher()
-    {
-        if ($dispatcher = $this->getDispatcher()) {
-            return $dispatcher;
-        }
-
-        return null;
     }
 
     public function setErrorAction($action)
