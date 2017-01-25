@@ -6,8 +6,8 @@ class Router
 {
     use RouterTrait;
 
-    public function createRoute($format, $action)
+    protected function createRoute($format, $action = null, $name = null)
     {
-        return (new Route($format, $action))->setRouter($this);
+        return $this->newRoute($format, $action, $name)->setRouter($this);
     }
 }

@@ -11,102 +11,89 @@ trait RouterTrait
     /**
      * @var Route[]
      */
-    protected $routes = [];
+    private $routes = [];
 
-    protected $bindersIn = [];
+    private $bindersIn = [];
 
-    protected $boundInParams = [];
+    private $boundInParams = [];
 
-    protected $bindersOut = [];
+    private $bindersOut = [];
 
-    protected $boundOutParams = [];
+    private $boundOutParams = [];
 
-    protected $errorAction = null;
+    private $errorAction = null;
 
-    protected $dispatcher = null;
+    private $dispatcher = null;
 
-    public function any($format, $action = null)
+    public function any($format, $action = null, $name = null)
     {
-        return $this->setRoute($format, $action);
+        return $this->route($format, $action, $name);
     }
 
-    public function get($format, $action = null)
+    public function get($format, $action = null, $name = null)
     {
-        return $this->setRoute($format, $action)->setType(Request::TYPE_GET);
+        return $this->route($format, $action, $name)->setType(Request::TYPE_GET);
     }
 
-    public function head($format, $action = null)
+    public function head($format, $action = null, $name = null)
     {
-        return $this->setRoute($format, $action)->setType(Request::TYPE_HEAD);
+        return $this->route($format, $action, $name)->setType(Request::TYPE_HEAD);
     }
 
-    public function post($format, $action = null)
+    public function post($format, $action = null, $name = null)
     {
-        return $this->setRoute($format, $action)->setType(Request::TYPE_POST);
+        return $this->route($format, $action, $name)->setType(Request::TYPE_POST);
     }
 
-    public function put($format, $action = null)
+    public function put($format, $action = null, $name = null)
     {
-        return $this->setRoute($format, $action)->setType(Request::TYPE_PUT);
+        return $this->route($format, $action, $name)->setType(Request::TYPE_PUT);
     }
 
-    public function delete($format, $action = null)
+    public function delete($format, $action = null, $name = null)
     {
-        return $this->setRoute($format, $action)->setType(Request::TYPE_DELETE);
+        return $this->route($format, $action, $name)->setType(Request::TYPE_DELETE);
     }
 
-    public function connect($format, $action = null)
+    public function connect($format, $action = null, $name = null)
     {
-        return $this->setRoute($format, $action)->setType(Request::TYPE_CONNECT);
+        return $this->route($format, $action, $name)->setType(Request::TYPE_CONNECT);
     }
 
-    public function options($format, $action = null)
+    public function options($format, $action = null, $name = null)
     {
-        return $this->setRoute($format, $action)->setType(Request::TYPE_OPTIONS);
+        return $this->route($format, $action, $name)->setType(Request::TYPE_OPTIONS);
     }
 
-    public function trace($format, $action = null)
+    public function trace($format, $action = null, $name = null)
     {
-        return $this->setRoute($format, $action)->setType(Request::TYPE_TRACE);
+        return $this->route($format, $action, $name)->setType(Request::TYPE_TRACE);
     }
 
-    public function patch($format, $action = null)
+    public function patch($format, $action = null, $name = null)
     {
-        return $this->setRoute($format, $action)->setType(Request::TYPE_PATCH);
+        return $this->route($format, $action, $name)->setType(Request::TYPE_PATCH);
     }
 
     public function hidden($format, $name)
     {
-        $route = $this->setRoute($format);
-
-        $route->setType(Route::TYPE_HIDDEN)->setName($name);
-
-        return $route;
+        return $this->route($format, null, $name)->setType(Route::TYPE_HIDDEN);
     }
 
     public function group($format, callable $callable)
     {
-        $route = $this->setRoute($format);
+        $route = $this->route($format)->setType(Route::TYPE_GROUP)->strict(false);
 
-        $route->setType(Route::TYPE_GROUP);
-
-        $route->strict(false);
-
-        Obj::callCallableWith($callable, $route);
+        Obj::call($callable, $route);
 
         return $route;
     }
 
-    public function setRoute($format, $action = null)
+    public function route($format, $action = null, $name = null)
     {
-        $this->routes[] = $route = $this->createRoute($format, $action);
+        $this->routes[] = $route = $this->createRoute($format, $action, $name);
 
         return $route;
-    }
-
-    public function createRoute($format, $action = null)
-    {
-        return new Route($format, $action);
     }
 
     public function findRoute($name)
@@ -148,7 +135,7 @@ trait RouterTrait
         return (bool) $this->routes;
     }
 
-    public function findRouteByPath($path)
+    public function findPath($path)
     {
         foreach ($this->routes as $route) {
             if ($matchedRoute = $route->match($path)) {
@@ -161,7 +148,7 @@ trait RouterTrait
 
     public function dispatchPath($path)
     {
-        return $this->findRouteByPath($path)->dispatch();
+        return $this->findPath($path)->dispatch();
     }
 
     public function fetchRoute($routeName, array $params = [], $full = false)
@@ -193,7 +180,7 @@ trait RouterTrait
         }
 
         if ($binder = $this->getBoundOut($name)) {
-            $value = is_callable($binder) ? Obj::callCallableWith($binder, $params) : $binder;
+            $value = is_callable($binder) ? Obj::call($binder, $params) : $binder;
 
             $this->boundOutParams[$name] = $value;
         } else {
@@ -237,7 +224,7 @@ trait RouterTrait
         }
 
         if ($binder = $this->getBoundIn($name)) {
-            $value = Obj::callCallableWith($binder, $params);
+            $value = Obj::call($binder, $params);
 
             $this->boundInParams[$name] = $value;
         } else {
@@ -260,8 +247,8 @@ trait RouterTrait
     public function dispatchAction($action, ...$params)
     {
         if (!is_callable($action)) {
-            if ($dispatcher = $this->getDispatcher()) {
-                $action = Obj::callCallableWith($dispatcher, $action);
+            if ($dispatcher = $this->getNearestDispatcher()) {
+                $action = Obj::call($dispatcher, $action);
             }
         }
 
@@ -273,7 +260,7 @@ trait RouterTrait
             throw new \Exception('Route action is not callable.');
         }
 
-        return Obj::callCallableWith($action, $this, ...$params);
+        return Obj::call($action, $this, ...$params);
     }
 
     public function dispatchException(\Exception $e)
@@ -307,5 +294,24 @@ trait RouterTrait
     public function getDispatcher()
     {
         return $this->dispatcher;
+    }
+
+    protected function createRoute($format, $action = null, $name = null)
+    {
+        return $this->newRoute($format, $action, $name);
+    }
+
+    protected function newRoute($format, $action = null, $name = null)
+    {
+        return new Route($format, $action, $name);
+    }
+
+    protected function getNearestDispatcher()
+    {
+        if ($dispatcher = $this->getDispatcher()) {
+            return $dispatcher;
+        }
+
+        return null;
     }
 }

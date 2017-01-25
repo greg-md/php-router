@@ -6,18 +6,18 @@ use Greg\Support\Accessor\AccessorTrait;
 use Greg\Support\Arr;
 use Greg\Support\Http\Request;
 use Greg\Support\Obj;
-use Greg\Support\Regex;
-use Greg\Support\Regex\InNamespaceRegex;
 use Greg\Support\Str;
+use Greg\Support\Tools\InNamespaceRegex;
+use Greg\Support\Tools\Regex;
 use Greg\Support\Url;
 
 class Route implements \ArrayAccess
 {
+    use AccessorTrait, RouterTrait;
+
     const TYPE_HIDDEN = 'hidden';
 
     const TYPE_GROUP = 'group';
-
-    use AccessorTrait, RouterTrait;
 
     protected $format = null;
 
@@ -59,7 +59,7 @@ class Route implements \ArrayAccess
      */
     protected $router = null;
 
-    public function __construct($format, $action = null)
+    public function __construct($format, $action = null, $name = null)
     {
         $this->setFormat($format);
 
@@ -67,116 +67,11 @@ class Route implements \ArrayAccess
             $this->setAction($action);
         }
 
+        if ($name) {
+            $this->setName($name);
+        }
+
         return $this;
-    }
-
-    public function createRoute($format, $action = null)
-    {
-        return (new self($format, $action))->setParent($this);
-    }
-
-    protected function regexPattern()
-    {
-        $curlyBrR = new InNamespaceRegex('{', '}', false);
-
-        $squareBrR = new InNamespaceRegex('[', ']');
-
-        $findRegex = "(?:{$curlyBrR}(\\?)?)|(?:{$squareBrR}(\\?)?)";
-
-        $pattern = Regex::pattern($findRegex);
-
-        return $pattern;
-    }
-
-    protected function compile($format)
-    {
-        $compiled = null;
-
-        $params = [];
-
-        $defaults = [];
-
-        $pattern = $this->regexPattern();
-
-        // find all "{param}?" and "[format]?"
-        if (preg_match_all($pattern, $format, $matches)) {
-            $paramKey = 1;
-            $paramRK = 2;
-
-            $subFormatKey = 3;
-            $subFormatRK = 4;
-
-            // split remain string
-            $parts = preg_split($pattern, $format);
-
-            foreach ($parts as $key => $remain) {
-                if ($remain) {
-                    $compiled .= Regex::quote($remain);
-                }
-
-                if (array_key_exists($key, $matches[0])) {
-                    if ($param = $matches[$paramKey][$key]) {
-                        list($paramName, $paramDefault, $paramRegex) = $this->splitParam($param);
-
-                        $params[] = $paramName;
-
-                        if ($paramDefault) {
-                            $defaults[$paramName] = $paramDefault;
-                        }
-
-                        $compiled .= "({$paramRegex})" . $matches[$paramRK][$key];
-                    } elseif ($subFormat = $matches[$subFormatKey][$key]) {
-                        list($subCompiled, $subParams, $subDefaults) = $this->compile($subFormat);
-
-                        $compiled .= "(?:{$subCompiled})" . $matches[$subFormatRK][$key];
-
-                        $params = array_merge($params, $subParams);
-
-                        $defaults = array_merge($defaults, $subDefaults);
-                    }
-                }
-            }
-        } else {
-            $compiled = Regex::quote($format);
-        }
-
-        return [$compiled, $params, $defaults];
-    }
-
-    protected function splitParam($param)
-    {
-        $name = $param;
-
-        $default = $regex = null;
-
-        // extract from var:default|regex
-        if (preg_match(Regex::pattern('^((?:\\\:|\\\||[^\:])+?)(?:\:((?:|\\\||[^\|])+?))?(?:\|(.+?))?$'), $param, $matches)) {
-            $name = $matches[1];
-
-            $greedy = false;
-
-            $nameLen = mb_strlen($name);
-
-            if ($name[$nameLen - 1] == '?') {
-                $name = mb_substr($name, 0, $nameLen - 1);
-
-                $greedy = true;
-            }
-
-            $default = Arr::get($matches, 2);
-
-            $regex = Arr::has($matches, 3) ? Regex::disableGroups($matches[3]) : null;
-
-            if (!$regex) {
-                $regex = ($this->regexMatchDelimiter() ? '.+' : '[^' . Regex::quote($this->getDelimiter()) . ']+');
-
-                if ($greedy) {
-                    $regex .= '?';
-                }
-            }
-        }
-
-        return [$name, $default, $regex];
     }
 
     public function dispatch(array $params = [])
@@ -212,12 +107,12 @@ class Route implements \ArrayAccess
         return $this->middleware;
     }
 
-    public function getAllMiddleware()
+    public function getMiddlewareRecursive()
     {
         $middleware = $this->middleware;
 
         if ($parent = $this->getParent()) {
-            $parentMiddleware = $parent->getAllMiddleware();
+            $parentMiddleware = $parent->getMiddlewareRecursive();
 
             $middleware = array_merge($parentMiddleware, $middleware);
         }
@@ -227,7 +122,7 @@ class Route implements \ArrayAccess
 
     protected function runBeforeMiddleware()
     {
-        foreach ($this->getAllMiddleware() as $middleware) {
+        foreach ($this->getMiddlewareRecursive() as $middleware) {
             if ($this->execBeforeMiddleware($middleware) === false) {
                 break;
             }
@@ -238,7 +133,7 @@ class Route implements \ArrayAccess
 
     protected function runAfterMiddleware()
     {
-        foreach ($this->getAllMiddleware() as $middleware) {
+        foreach ($this->getMiddlewareRecursive() as $middleware) {
             if ($this->execAfterMiddleware($middleware) === false) {
                 break;
             }
@@ -250,7 +145,7 @@ class Route implements \ArrayAccess
     protected function execBeforeMiddleware($middleware)
     {
         if (method_exists($middleware, 'routerBeforeMiddleware')) {
-            return Obj::callCallableWith([$middleware, 'routerBeforeMiddleware'], $this);
+            return Obj::call([$middleware, 'routerBeforeMiddleware'], $this);
         }
 
         return true;
@@ -259,7 +154,7 @@ class Route implements \ArrayAccess
     protected function execAfterMiddleware($middleware)
     {
         if (method_exists($middleware, 'routerAfterMiddleware')) {
-            return Obj::callCallableWith([$middleware, 'routerAfterMiddleware'], $this);
+            return Obj::call([$middleware, 'routerAfterMiddleware'], $this);
         }
 
         return true;
@@ -372,7 +267,7 @@ class Route implements \ArrayAccess
                 $matchedParams = $params;
 
                 foreach ($this->onMatch as $callable) {
-                    Obj::callCallableWith($callable, $matchedRoute);
+                    Obj::call($callable, $matchedRoute);
                 }
             }
 
@@ -522,7 +417,7 @@ class Route implements \ArrayAccess
         return $compiled;
     }
 
-    public function fetch(array $params = [], $full = false)
+    public function fetch(array $params = [], $absolute = false)
     {
         $compiled = $this->fetchPath($params);
 
@@ -550,10 +445,10 @@ class Route implements \ArrayAccess
 
             $compiled = $hostCompiled . $compiled;
 
-            $compiled = Url::fix($compiled, Request::isSecured());
+            $compiled = Url::schema($compiled);
         } else {
-            if ($full) {
-                $compiled = Url::full($compiled);
+            if ($absolute) {
+                $compiled = Url::absolute($compiled);
             }
         }
 
@@ -651,13 +546,13 @@ class Route implements \ArrayAccess
             $compiled = $format;
         }
 
-        $defaultParams and Arr::del($params, $defaultParams);
+        $defaultParams and Arr::remove($params, $defaultParams);
 
         if (!$required and !$usedParams) {
             return null;
         }
 
-        $usedParams and Arr::del($params, $usedParams);
+        $usedParams and Arr::remove($params, $usedParams);
 
         return [$compiled, $usedParams];
     }
@@ -897,5 +792,112 @@ class Route implements \ArrayAccess
     public function offsetUnset($offset)
     {
         return $this->removeFromAccessor($offset);
+    }
+
+    protected function createRoute($format, $action = null, $name = null)
+    {
+        return $this->newRoute($format, $action, $name)->setParent($this);
+    }
+
+    protected function regexPattern()
+    {
+        $curlyBrR = new InNamespaceRegex('{', '}', false);
+
+        $squareBrR = new InNamespaceRegex('[', ']');
+
+        $findRegex = "(?:{$curlyBrR}(\\?)?)|(?:{$squareBrR}(\\?)?)";
+
+        return Regex::pattern($findRegex);
+    }
+
+    protected function splitParam($param)
+    {
+        $name = $param;
+
+        $default = $regex = null;
+
+        // extract from var:default|regex
+        if (preg_match(Regex::pattern('^((?:\\\:|\\\||[^\:])+?)(?:\:((?:|\\\||[^\|])+?))?(?:\|(.+?))?$'), $param, $matches)) {
+            $name = $matches[1];
+
+            $greedy = false;
+
+            $nameLen = mb_strlen($name);
+
+            if ($name[$nameLen - 1] == '?') {
+                $name = mb_substr($name, 0, $nameLen - 1);
+
+                $greedy = true;
+            }
+
+            $default = Arr::get($matches, 2);
+
+            $regex = Arr::has($matches, 3) ? Regex::disableGroups($matches[3]) : null;
+
+            if (!$regex) {
+                $regex = ($this->regexMatchDelimiter() ? '.+' : '[^' . Regex::quote($this->getDelimiter()) . ']+');
+
+                if ($greedy) {
+                    $regex .= '?';
+                }
+            }
+        }
+
+        return [$name, $default, $regex];
+    }
+
+    protected function compile($format)
+    {
+        $compiled = null;
+
+        $params = [];
+
+        $defaults = [];
+
+        $pattern = $this->regexPattern();
+
+        // find all "{param}?" and "[format]?"
+        if (preg_match_all($pattern, $format, $matches)) {
+            $paramKey = 1;
+            $paramRK = 2;
+
+            $subFormatKey = 3;
+            $subFormatRK = 4;
+
+            // split remain string
+            $parts = preg_split($pattern, $format);
+
+            foreach ($parts as $key => $remain) {
+                if ($remain) {
+                    $compiled .= Regex::quote($remain);
+                }
+
+                if (array_key_exists($key, $matches[0])) {
+                    if ($param = $matches[$paramKey][$key]) {
+                        list($paramName, $paramDefault, $paramRegex) = $this->splitParam($param);
+
+                        $params[] = $paramName;
+
+                        if ($paramDefault) {
+                            $defaults[$paramName] = $paramDefault;
+                        }
+
+                        $compiled .= "({$paramRegex})" . $matches[$paramRK][$key];
+                    } elseif ($subFormat = $matches[$subFormatKey][$key]) {
+                        list($subCompiled, $subParams, $subDefaults) = $this->compile($subFormat);
+
+                        $compiled .= "(?:{$subCompiled})" . $matches[$subFormatRK][$key];
+
+                        $params = array_merge($params, $subParams);
+
+                        $defaults = array_merge($defaults, $subDefaults);
+                    }
+                }
+            }
+        } else {
+            $compiled = Regex::quote($format);
+        }
+
+        return [$compiled, $params, $defaults];
     }
 }
