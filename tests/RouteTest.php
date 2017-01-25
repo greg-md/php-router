@@ -9,6 +9,5 @@ class RouteTest extends TestCase
     /** @test */
     public function it_dispatch_a_route()
     {
-
     }
 }
