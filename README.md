@@ -93,10 +93,10 @@ Let say we have a page with all articles of the same type, including pagination.
 $router->get('/articles/{type:lifestyle|[a-z0-9-]+}[/page-{page:1#uint}]', 'ArticlesController@type', 'articles.type');
 ```
 
-`type` - is required in the route. Its default value is `lifestyle` and should consist of letters, numbers and dashes.
+`type` parameter is required in the route. Default value is `lifestyle` and should consist of **letters, numbers and dashes**.
 
-`page` - is required in its segment, but the segment entirely is optional. Its default value is `1` and should consist of unsigned integers.
-If the `page` will not be set or will be the same value as its default value, the entire segment will be excluded from the URL.
+`page` parameter is required in its segment, but the segment entirely is optional. Default value is `1` and should consist of **unsigned integers**.
+If the `page` will not be set or will be the same as default value, the entire segment will be excluded from the URL.
 
 ```php
 echo $router->url('articles.type'); // result: /articles/lifestyle
