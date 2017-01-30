@@ -123,17 +123,25 @@ In this way, you can easily create good user friendly URLs.
 
 # Router
 
-* [request](#request) - Create a route for a specific request method.
-    * [get](#request) - Create a GET route.
-    * [head](#request) - Create a HEAD route.
-    * [post](#request) - Create a POST route.
-    * [put](#request) - Create a PUT route.
-    * [delete](#request) - Create a DELETE route.
-    * [connect](#request) - Create a CONNECT route.
-    * [options](#request) - Create a OPTIONS route.
-    * [trace](#request) - Create a TRACE route.
-    * [patch](#request) - Create a PATCH route.
 * [any](#any) - Create a route for any request method;
+* [request](#request) - Create a route for a specific request method;
+    * [get](#request) - Create a GET route;
+    * [head](#request) - Create a HEAD route;
+    * [post](#request) - Create a POST route;
+    * [put](#request) - Create a PUT route;
+    * [delete](#request) - Create a DELETE route;
+    * [connect](#request) - Create a CONNECT route;
+    * [options](#request) - Create a OPTIONS route;
+    * [trace](#request) - Create a TRACE route;
+    * [patch](#request) - Create a PATCH route;
+
+## any
+
+Create a route for any request method.
+
+```php
+any(string $schema, $action, ?string $name = null): RequestRoute
+```
 
 ## request
 
