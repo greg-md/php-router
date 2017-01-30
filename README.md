@@ -39,9 +39,9 @@ $router->setDispatcher(function ($action): callable {
 ```php
 $router->any('/', function() {
     return 'Hello World!';
-});
+}, 'home');
 
-$router->post('/user/{id#uint}', 'UsersController@save');
+$router->post('/user/{id#uint}', 'UsersController@save', 'user.save');
 ```
 
 **Now**, you can dispatch actions:
@@ -53,11 +53,60 @@ echo $router->dispatch('/'); // result: Hello World!
 echo $router->dispatch('/user/1', 'POST');
 ```
 
+**And**, get URLs for them:
+
+```php
+$router->url('home'); // result: /
+
+$router->url('home', ['foo' => 'bar']); // result: /?foo=bar
+
+$router->url('user.save', ['id' => 1]); // result: /user/id
+
+$router->url('user.save', ['id' => 1, 'debug' => true]); // result: /user/id?debug=true
+```
+
 # Routing Schema
 
-Routing schema supports **parameters** and **optional segments**. What does it means? Let see in the example below:
+Routing schema supports **parameters** and **optional segments**.
 
-`/catalog/[/page-{page:1#uint}]`
+**Parameter** format is `{<name>[:<default>[#<type>[|<regex>]]]}?`.
+
+`<name>` - Parameter name;  
+`<default>` - Default value;  
+`<type>` - Parameter type. Supports `int`, `uint`, `boolean`(alias `bool`);  
+`<regex>` - Parameter regex;  
+`?` - Question symbol from the end determine if the parameter is optional or not.
+
+> Only `<name>` is required in the parameter.
+
+**Optional segment** format is `[<schema>]`. Is working recursively.
+
+`<schema>` - Any [routing schema](#routing-schema).
+
+> It is very useful when you want to use the same action with different routing schema.
+
+_Example:_
+
+Let say we have a page with all articles of the same type, including pagination. The route for this page will be:
+
+```
+$router->get('/articles/{type:lifestyle|[a-z0-9-]+}[/page-{page:1#uint}]', 'ArticlesController@type', 'articles.type');
+```
+
+Parameter `type` is required in the route. Its default value is `lifestyle` and should consist of letters, numbers and dashes.
+
+Parameter `page` is required in its segment, but the segment entirely is optional.
+If the `page` will not be set, the entire segment will be excluded from the URL.
+
+```php
+echo $router->url('articles.type'); // result: /articles/lifestyle
+
+echo $router->url('articles.type', ['type' => 'travel']); // result: /articles/travel
+
+echo $router->url('articles.type', ['page' => 1]); // result: /articles/lifestyle
+
+echo $router->url('articles.type', ['page' => 2]); // result: /articles/lifestyle/page-2
+```
 
 # Router
 
