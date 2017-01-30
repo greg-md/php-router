@@ -54,7 +54,7 @@ $router->any('/', function() {
 $router->post('/user/{id#uint}', 'UsersController@save', 'user.save');
 ```
 
-**Now**, you can dispatch actions:
+**Now**, you can dispatch URLs path:
 
 ```php
 echo $router->dispatch('/'); // result: Hello World!
@@ -106,7 +106,7 @@ $router->get('/articles/{type:lifestyle|[a-z0-9-]+}[/page-{page:1#uint}]', 'Arti
 `type` parameter is required in the route. Default value is `lifestyle` and should consist of **letters, numbers and dashes**.
 
 `page` parameter is required in its segment, but the segment entirely is optional. Default value is `1` and should consist of **unsigned integers**.
-If the parameter will not be set or will be the same as default value, the entire segment will be excluded from the URL.
+If the parameter will not be set or will be the same as default value, the entire segment will be excluded from the URL path.
 
 ```php
 echo $router->url('articles.type'); // result: /articles/lifestyle
@@ -134,6 +134,25 @@ In this way, you can easily create good user friendly URLs.
     * [options](#request) - Create a OPTIONS route;
     * [trace](#request) - Create a TRACE route;
     * [patch](#request) - Create a PATCH route;
+* [hidden](#hidden) - Create a hidden route. You can not dispatch it, but you can generate URLs from it;
+* [group](#group) - Create a hidden route;
+* [url](#url) - Get the URL of a route;
+* [bind](#bind) - Set an input/output binder for a parameter;
+* [bindCallable](#bindCallable) - Set an input/output binder for a parameter, using callable's;
+* [bindIn](#bindIn) - Set an input binder for a parameter;
+* [binderIn](#binderIn) - Get the input binder of a parameter;
+* [bindInParam](#bindInParam) - Bind an input parameter;
+* [bindOut](#bindOut) - Set an output binder for a parameter;
+* [binderOut](#binderOut) - Get the output binder of a parameter;
+* [bindOutParam](#bindOutParam) - Bind an output parameter;
+* [setErrorAction](setErrorAction) - Set error action;
+* [getErrorAction](getErrorAction) - Get error action;
+* [setDispatcher](setDispatcher) - Set dispatcher;
+* [getDispatcher](getDispatcher) - Get dispatcher;
+* [setHost](setHost) - Set host;
+* [getHost](getHost) - Get host;
+* [dispatch](#dispatch) - Dispatch an URL path;
+* [findRoute](#findRoute) - Find a route by name;
 
 ## any
 
