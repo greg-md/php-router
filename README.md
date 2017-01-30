@@ -85,7 +85,7 @@ Routing schema supports **parameters** and **optional segments**.
 
 > It is very useful when you want to use the same action with different routing schema.
 
-_Example:_
+### Example
 
 Let say we have a page with all articles of the same type, including pagination. The route for this page will be:
 
