@@ -80,11 +80,11 @@ abstract class RoutesAbstract
         return $this->request($schema, $action, $name, Request::TYPE_PATCH);
     }
 
-    public function request(string $schema, $action, ?string $name = null, ?string $type = null): RequestRoute
+    public function request(string $schema, $action, ?string $name = null, ?string $method = null): RequestRoute
     {
-        $typeRef = &Arr::getArrayForceRef($this->requestRoutes, $type);
+        $methodRef = &Arr::getArrayForceRef($this->requestRoutes, $method);
 
-        Arr::set($typeRef, $name, $route = $this->newRequest($schema, $action));
+        Arr::set($methodRef, $name, $route = $this->newRequest($schema, $action));
 
         return $route;
     }
@@ -156,16 +156,16 @@ abstract class RoutesAbstract
         });
     }
 
-    public function dispatch(string $path, ?string $type = null): string
+    public function dispatch(string $path, ?string $method = null): string
     {
-        foreach ($this->requestTypeRoutes($type) as $route) {
+        foreach ($this->requestTypeRoutes($method) as $route) {
             if ($request = $route->match($path)) {
                 return $route->exec($request);
             }
         }
 
         foreach ($this->groupRoutes as $group) {
-            if ($matched = $group->match($path, $type)) {
+            if ($matched = $group->match($path, $method)) {
                 [$route, $request] = $matched;
 
                 return $route->exec($request);
@@ -224,13 +224,13 @@ abstract class RoutesAbstract
     }
 
     /**
-     * @param $type
+     * @param $method
      *
      * @return RequestRoute[]
      */
-    protected function requestTypeRoutes(?string $type): array
+    protected function requestTypeRoutes(?string $method): array
     {
-        return Arr::getArray($this->requestRoutes, $type);
+        return Arr::getArray($this->requestRoutes, $method);
     }
 
     protected function newRequest(string $schema, $action): RequestRoute

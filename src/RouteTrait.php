@@ -9,7 +9,7 @@ trait RouteTrait
 {
     private $schema;
 
-    private $schemaInfo = null;
+    private $schemaInfo;
 
     /**
      * @var RoutesAbstract

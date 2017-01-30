@@ -12,3 +12,43 @@ A smarter router for web artisans.
 # Requirements
 
 * PHP Version `^7.1`
+
+# How It Works
+
+**First of all**, you have to initialize a Router:
+
+```php
+$router = new Router();
+```
+
+**Optionally**, you can add an action dispatcher to support custom action types.
+The dispatcher should return a callable of the action.
+
+Let say you want to support an action like `Controller@action`:
+
+```php
+$router->setDispatcher(function ($action) {
+    [$controllerName, $actionName] = explode('@', $action);
+    
+    return [new $controllerName, $actionName];
+});
+```
+
+**Then**, set up some routes:
+
+```php
+$router->any('/', function() {
+    return 'Hello World!';
+});
+
+$router->post('/user/{id#uint}', 'UsersController@save');
+```
+
+**Now**, you can dispatch actions:
+
+```php
+echo $router->dispatch('/'); // result: Hello World!
+
+// Initialize "UsersController" and execute "save" method.
+echo $router->dispatch('/user/1', 'POST');
+```

@@ -96,7 +96,7 @@ class RouteUtils
             return (int) $value;
         }
 
-        if ($type === 'int+') {
+        if ($type === 'uint') {
             return (int) ($value < 0 ? 0 : $value);
         }
 
@@ -113,7 +113,7 @@ class RouteUtils
             return '-?[0-9]+';
         }
 
-        if ($type === 'int+') {
+        if ($type === 'uint') {
             return '[0-9]+';
         }
 

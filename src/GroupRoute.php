@@ -42,12 +42,12 @@ class GroupRoute extends RoutesAbstract
         return parent::getDispatcher() ?: ($this->getParent() ? $this->getParent()->getDispatcher() : null);
     }
 
-    public function match(string $path, ?string $type = null): ?array
+    public function match(string $path, ?string $method = null): ?array
     {
         [$regex, $regexParams] = $this->schemaInfo();
 
         if (preg_match(Regex::pattern('^' . $regex . '(?\'child\'.*)'), $path, $matches)) {
-            if (!$matched = $this->matchChild($matches['child'], $type)) {
+            if (!$matched = $this->matchChild($matches['child'], $method)) {
                 return null;
             }
 
@@ -65,16 +65,16 @@ class GroupRoute extends RoutesAbstract
         return null;
     }
 
-    protected function matchChild(string $path, ?string $type = null): ?array
+    protected function matchChild(string $path, ?string $method = null): ?array
     {
-        foreach ($this->requestTypeRoutes($type) as $route) {
+        foreach ($this->requestTypeRoutes($method) as $route) {
             if ($data = $route->match($path)) {
                 return [$route, $data];
             }
         }
 
         foreach ($this->groupRoutes as $group) {
-            if ($matched = $group->match($path, $type)) {
+            if ($matched = $group->match($path, $method)) {
                 return $matched;
             }
         }

@@ -280,7 +280,7 @@ class RouterTest extends TestCase
     /** @test */
     public function it_gets_int_unsigned_param()
     {
-        $route = new RequestRoute('/{id#int+}', null);
+        $route = new RequestRoute('/{id#uint}', null);
 
         $response = $route->match('/1');
 
