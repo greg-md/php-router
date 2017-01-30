@@ -42,6 +42,7 @@ class RouteUtils
         return Regex::pattern(static::schemaRegex());
     }
 
+    // find all "{param}?" and "[segment[sub-segment]]"
     public static function schemaRegex(): string
     {
         static $regex;
@@ -51,7 +52,7 @@ class RouteUtils
 
             $squareBrR = (new InNamespaceRegex('[', ']'))->recursive()->capture('segment');
 
-            $regex = "(?:{$curlyBrR}(?'paramOptional'\\?)?)|(?:{$squareBrR}(?'segmentOptional'\\?)?)";
+            $regex = "(?:{$curlyBrR}(?'paramOptional'\\?)?)|(?:{$squareBrR})";
         }
 
         return $regex;
@@ -163,7 +164,7 @@ class RouteUtils
                         'type'    => $param['type'],
                     ];
 
-                    $paramRegex = $param['regex'] ?? '[^\\/]+';
+                    $paramRegex = $param['regex'] ?: '[^\\/]+';
 
                     $regex .= "(?'{$param['name']}'{$paramRegex})" . $matches['paramOptional'][$key];
                 } elseif ($segment = $matches['segment'][$key]) {
@@ -171,7 +172,7 @@ class RouteUtils
 
                     $params = array_merge($params, $segmentParams);
 
-                    $regex .= "(?:{$segmentRegex})" . $matches['segmentOptional'][$key];
+                    $regex .= "(?:{$segmentRegex})?";
                 }
             }
         }

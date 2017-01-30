@@ -26,9 +26,9 @@ class RouteData
         return $this->path;
     }
 
-    public function params(): array
+    public function params($key = null)
     {
-        return $this->params;
+        return func_num_args() ? Arr::get($this->params, $key) : $this->params;
     }
 
     public function cleanParams($key = null)

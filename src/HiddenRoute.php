@@ -4,9 +4,9 @@ namespace Greg\Routing;
 
 use Greg\Routing\Bind\BindOutTrait;
 
-class HiddenRoute extends RoutingAbstract implements FetchRouteStrategy
+class HiddenRoute implements FetchRouteStrategy
 {
-    use RouteTrait, BindOutTrait, FetchRouteTrait;
+    use RouteTrait, BindOutTrait, HostTrait, FetchRouteTrait;
 
     public function __construct(string $schema)
     {
@@ -22,6 +22,6 @@ class HiddenRoute extends RoutingAbstract implements FetchRouteStrategy
 
     public function getHost(): ?string
     {
-        return parent::getHost() ?: ($this->getParent() ? $this->getParent()->getHost() : null);
+        return $this->host ?: ($this->getParent() ? $this->getParent()->getHost() : null);
     }
 }

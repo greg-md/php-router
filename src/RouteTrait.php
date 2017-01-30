@@ -59,7 +59,7 @@ trait RouteTrait
     {
         $params = array_filter($params);
 
-        // find all "{param}?" and "[segment]?"
+        // find all "{param}?" and "[segment]"
         if (preg_match_all($pattern = RouteUtils::schemaPattern(), $schema, $matches)) {
             // split remain string
             $parts = preg_split($pattern, $schema);
@@ -96,9 +96,7 @@ trait RouteTrait
                         $fetchFailed = true;
                     }
                 } elseif ($segment = $matches['segment'][$key]) {
-                    $optional = $matches['segmentOptional'][$key] === '?';
-
-                    [$segmentPath, $params] = $this->fetchSegment($segment, $params, !$optional);
+                    [$segmentPath, $params] = $this->fetchSegment($segment, $params, false);
 
                     if ($segmentPath !== '') {
                         $path[] = $segmentPath;

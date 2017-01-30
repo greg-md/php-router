@@ -11,24 +11,24 @@ use Greg\Support\Http\Request;
 use Greg\Support\Obj;
 use Greg\Support\Str;
 
-abstract class RoutesAbstract extends RoutingAbstract
+abstract class RoutesAbstract
 {
-    use BindInTrait, BindOutTrait, ErrorActionTrait, DispatcherTrait;
+    use BindInTrait, BindOutTrait, ErrorActionTrait, DispatcherTrait, HostTrait;
 
     /**
      * @var RequestRoute[][]
      */
-    private $requestRoutes = [];
+    protected $requestRoutes = [];
 
     /**
      * @var GroupRoute[]
      */
-    private $groupRoutes = [];
+    protected $groupRoutes = [];
 
     /**
      * @var HiddenRoute[]
      */
-    private $hiddenRoutes = [];
+    protected $hiddenRoutes = [];
 
     public function any(string $schema, $action, ?string $name = null): RequestRoute
     {
@@ -164,7 +164,7 @@ abstract class RoutesAbstract extends RoutingAbstract
             }
         }
 
-        foreach ($this->groupRoutes() as $group) {
+        foreach ($this->groupRoutes as $group) {
             if ($matched = $group->match($path, $type)) {
                 [$route, $request] = $matched;
 
@@ -185,7 +185,7 @@ abstract class RoutesAbstract extends RoutingAbstract
             return $hiddenRoute;
         }
 
-        foreach ($this->groupRoutes() as $prefix => $group) {
+        foreach ($this->groupRoutes as $prefix => $group) {
             if (!Str::startsWith($name, $prefix)) {
                 continue;
             }
@@ -209,7 +209,7 @@ abstract class RoutesAbstract extends RoutingAbstract
 
     protected function findRequestRoute(string $name): ?RequestRoute
     {
-        foreach ($this->requestRoutes() as $routes) {
+        foreach ($this->requestRoutes as $routes) {
             if (isset($routes[$name])) {
                 return $routes[$name];
             }
@@ -252,17 +252,4 @@ abstract class RoutesAbstract extends RoutingAbstract
     {
         return $this->requestRoutes;
     }
-
-    /**
-     * @return GroupRoute[]
-     */
-    protected function groupRoutes(): array
-    {
-        return $this->groupRoutes;
-    }
-
-//    protected function hiddenRoutes(): array
-//    {
-//        return $this->hiddenRoutes;
-//    }
 }

@@ -2,7 +2,7 @@
 
 namespace Greg\Routing;
 
-abstract class RoutingAbstract
+trait HostTrait
 {
     private $host;
 

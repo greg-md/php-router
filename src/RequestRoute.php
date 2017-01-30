@@ -9,9 +9,9 @@ use Greg\Routing\Bind\BindOutTrait;
 use Greg\Support\Obj;
 use Greg\Support\Tools\Regex;
 
-class RequestRoute extends RoutingAbstract implements FetchRouteStrategy
+class RequestRoute implements FetchRouteStrategy
 {
-    use RouteTrait, BindInTrait, BindOutTrait, FetchRouteTrait, ErrorActionTrait, DispatcherTrait;
+    use RouteTrait, BindInTrait, BindOutTrait, FetchRouteTrait, ErrorActionTrait, DispatcherTrait, HostTrait;
 
     private $action;
 
@@ -46,7 +46,7 @@ class RequestRoute extends RoutingAbstract implements FetchRouteStrategy
 
     public function getHost(): ?string
     {
-        return parent::getHost() ?: ($this->getParent() ? $this->getParent()->getHost() : null);
+        return $this->host ?: ($this->getParent() ? $this->getParent()->getHost() : null);
     }
 
     public function match(string $path): ?RouteData
@@ -75,13 +75,7 @@ class RequestRoute extends RoutingAbstract implements FetchRouteStrategy
 
     protected function execAction($action, RouteData $request, ...$params): string
     {
-        if (!is_callable($action)) {
-            if ($dispatcher = $this->getDispatcher()) {
-                $action = Obj::call($dispatcher, $action);
-            }
-        }
-
-        if (!is_callable($action)) {
+        if (!is_callable($action = $this->fetchAction($action))) {
             throw new RoutingException('Route action is not a callable.');
         }
 
@@ -95,5 +89,14 @@ class RequestRoute extends RoutingAbstract implements FetchRouteStrategy
         }
 
         throw $e;
+    }
+
+    protected function fetchAction($action)
+    {
+        if (!is_callable($action) and $dispatcher = $this->getDispatcher()) {
+            $action = Obj::call($dispatcher, $action);
+        }
+
+        return $action;
     }
 }

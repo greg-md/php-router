@@ -73,7 +73,7 @@ class GroupRoute extends RoutesAbstract
             }
         }
 
-        foreach ($this->groupRoutes() as $group) {
+        foreach ($this->groupRoutes as $group) {
             if ($matched = $group->match($path, $type)) {
                 return $matched;
             }
