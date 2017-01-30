@@ -27,7 +27,7 @@ The dispatcher should return a callable of the action.
 Let say you want to support an action format like `Controller@action`:
 
 ```php
-$router->setDispatcher(function ($action) {
+$router->setDispatcher(function ($action): callable {
     [$controllerName, $actionName] = explode('@', $action);
     
     return [new $controllerName, $actionName];
@@ -52,3 +52,6 @@ echo $router->dispatch('/'); // result: Hello World!
 // Initialize "UsersController" and execute "save" method.
 echo $router->dispatch('/user/1', 'POST');
 ```
+
+# Documentation
+
