@@ -21,10 +21,10 @@ A smarter router for web artisans.
 $router = new \Greg\Routing\Router();
 ```
 
-**Optionally**, you can add an action dispatcher to support custom action types.
+**Optionally**, you can add an action dispatcher to support custom actions.
 The dispatcher should return a callable of the action.
 
-Let say you want to support an action format like `Controller@action`:
+Let say you want to support an action like `Controller@action`:
 
 ```php
 $router->setDispatcher(function ($action): callable {
@@ -53,5 +53,5 @@ echo $router->dispatch('/'); // result: Hello World!
 echo $router->dispatch('/user/1', 'POST');
 ```
 
-# Documentation
+# Router
 
