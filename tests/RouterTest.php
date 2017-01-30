@@ -9,7 +9,6 @@ use Greg\Routing\RequestRoute;
 use Greg\Routing\RouteData;
 use Greg\Routing\Router;
 use Greg\Routing\RoutingException;
-use Greg\Support\Url;
 use PHPUnit\Framework\TestCase;
 
 class RouterTest extends TestCase
@@ -71,14 +70,6 @@ class RouterTest extends TestCase
         $this->router->hidden('/user/{id}', 'user');
 
         $this->assertEquals('/user/1?foo=bar', $this->router->url('user', ['id' => 1, 'foo' => 'bar']));
-    }
-
-    /** @test */
-    public function it_gets_absolute_url()
-    {
-        $this->router->hidden('', 'home');
-
-        $this->assertEquals(Url::absolute('/'), $this->router->urlAbsolute('home'));
     }
 
     /** @test */
@@ -221,7 +212,7 @@ class RouterTest extends TestCase
     /** @test */
     public function it_gets_matched_path()
     {
-        $route = new RequestRoute($schema = '/api[/v{v}?/{vv}]?', null);
+        $route = new RequestRoute($schema = '/api[/v{v}?/{vv}]', null);
 
         $data = $route->match('/api');
 
