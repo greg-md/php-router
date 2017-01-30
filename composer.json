@@ -1,9 +1,9 @@
 {
-  "name": "greg-md/php-router",
+  "name": "greg-md/php-routing",
   "type": "library",
-  "description": "Greg PHP Router",
-  "keywords": [ "greg", "php-router" ],
-  "homepage": "https://github.com/greg-md/php-router",
+  "description": "Greg PHP Routing",
+  "keywords": [ "greg", "php-routing" ],
+  "homepage": "https://github.com/greg-md/php-routing",
   "license": "MIT",
   "authors": [
     { "name": "Grigorii Duca", "email": "contact@greg.md", "homepage": "http://greg.md/" }
@@ -18,12 +18,12 @@
   },
   "autoload": {
     "psr-4": {
-      "Greg\\Router\\": "src/"
+      "Greg\\Routing\\": "src/"
     }
   },
   "autoload-dev": {
     "psr-4": {
-      "Greg\\Router\\Tests\\": "tests/"
+      "Greg\\Routing\\Tests\\": "tests/"
     }
   }
 }

@@ -1,13 +1,18 @@
 <?php
 
-namespace Greg\Router;
+namespace Greg\Routing;
 
-class Router
+use Greg\Support\Url;
+
+class Router extends RoutesAbstract
 {
-    use RouterTrait;
-
-    protected function createRoute($format, $action = null, $name = null)
+    public function url(string $name, array $params = []): string
     {
-        return $this->newRoute($format, $action, $name)->setRouter($this);
+        return $this->getRoute($name)->fetch($params);
+    }
+
+    public function urlAbsolute(string $name, array $params = []): string
+    {
+        return Url::absolute($this->url($name, $params));
     }
 }

@@ -1,4 +1,4 @@
-# Greg PHP Router
+# Greg PHP Routing
 
 [![StyleCI](https://styleci.io/repos/70080128/shield?style=flat)](https://styleci.io/repos/70080128)
 [![Build Status](https://travis-ci.org/greg-md/php-router.svg)](https://travis-ci.org/greg-md/php-router)
@@ -8,3 +8,7 @@
 [![License](https://poser.pugx.org/greg-md/php-router/license.svg)](https://packagist.org/packages/greg-md/php-router)
 
 A smarter router for web artisans.
+
+# Requirements
+
+* PHP Version `^7.1`

@@ -10,6 +10,19 @@ function dd($arg, ...$args)
 {
     foreach (func_get_args() as $argument) {
         print_r($argument);
+
+        echo PHP_EOL;
+    }
+
+    die;
+}
+
+function vd($arg, ...$args)
+{
+    foreach (func_get_args() as $argument) {
+        var_dump($argument);
+
+        echo PHP_EOL;
     }
 
     die;
