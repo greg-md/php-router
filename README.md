@@ -69,7 +69,7 @@ $router->url('user.save', ['id' => 1, 'debug' => true]); // result: /user/id?deb
 
 Routing schema supports **parameters** and **optional segments**.
 
-**Parameter** format is `{<name>[:<default>[#<type>[|<regex>]]]}?`.
+**Parameter** format is `{<name>[:<default>][#<type>][|<regex>]}?`.
 
 `<name>` - Parameter name;  
 `<default>` - Default value;  
