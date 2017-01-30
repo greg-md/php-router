@@ -55,7 +55,7 @@ trait RouteTrait
         return [$path, $params];
     }
 
-    protected function fetchSegment(string $schema, array $params =[], bool $required = true): array
+    protected function fetchSegment(string $schema, array $params = [], bool $required = true): array
     {
         $params = array_filter($params);
 
@@ -128,7 +128,7 @@ trait RouteTrait
 
         $value = Arr::has($params, $name) ? $this->bindOutParam($name, $params[$name]) : $param['default'];
 
-        $value = (string)$value;
+        $value = (string) $value;
 
         if ($value === '') {
             if ($optional) {
@@ -142,7 +142,7 @@ trait RouteTrait
             return false;
         }
 
-        if ($param['type'] and $value !== (string)RouteUtils::paramFixType($value, $param['type'])) {
+        if ($param['type'] and $value !== (string) RouteUtils::paramFixType($value, $param['type'])) {
             throw new RoutingException('Parameter `' . $name . '` is not `' . $param['type'] . '`.');
         }
 

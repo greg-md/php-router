@@ -29,7 +29,7 @@ trait FetchRouteTrait
 
     abstract public function path(array $params = []): array;
 
-    abstract protected function fetchSegment(string $schema, array $params =[], bool $required = true): array;
+    abstract protected function fetchSegment(string $schema, array $params = [], bool $required = true): array;
 
     abstract public function getHost(): ?string;
 }

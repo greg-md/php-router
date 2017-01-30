@@ -9,7 +9,7 @@ use Greg\Support\Tools\Regex;
 class RouteUtils
 {
     /**
-     * Regex pattern for param:default|regex
+     * Regex pattern for param:default|regex.
      *
      * @return string
      */
@@ -141,6 +141,7 @@ class RouteUtils
 
         return $params;
     }
+
     private static function schemaMatchedInfo(array $matches, array $parts): array
     {
         $regex = null;
@@ -157,9 +158,9 @@ class RouteUtils
                     $param = static::splitParam($param);
 
                     $params[] = [
-                        'name' => $param['name'],
+                        'name'    => $param['name'],
                         'default' => $param['default'],
-                        'type' => $param['type'],
+                        'type'    => $param['type'],
                     ];
 
                     $paramRegex = $param['regex'] ?? '[^\\/]+';

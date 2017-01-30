@@ -51,8 +51,8 @@ class GroupRoute extends RoutesAbstract
                 return null;
             }
 
-            /** @var RequestRoute $route */
-            /** @var RouteData $data */
+            /* @var RequestRoute $route */
+            /* @var RouteData $data */
             [$route, $data] = $matched;
 
             [$cleanParams, $params] = $this->fetchMatchedParams($regexParams, $matches);

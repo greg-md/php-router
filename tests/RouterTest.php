@@ -6,8 +6,8 @@ use Greg\Routing\Bind\BindInStrategy;
 use Greg\Routing\Bind\BindOutStrategy;
 use Greg\Routing\GroupRoute;
 use Greg\Routing\RequestRoute;
-use Greg\Routing\Router;
 use Greg\Routing\RouteData;
+use Greg\Routing\Router;
 use Greg\Routing\RoutingException;
 use Greg\Support\Url;
 use PHPUnit\Framework\TestCase;
@@ -29,7 +29,7 @@ class RouterTest extends TestCase
     /** @test */
     public function it_dispatch_a_route()
     {
-        $this->router->any('/', function() {
+        $this->router->any('/', function () {
             return 'Hello World!';
         });
 
@@ -47,7 +47,7 @@ class RouterTest extends TestCase
     {
         $_SERVER['REQUEST_METHOD'] = strtoupper($type);
 
-        $this->router->{$type}('/', function() {
+        $this->router->{$type}('/', function () {
             return 'Hello World!';
         });
 
@@ -56,7 +56,7 @@ class RouterTest extends TestCase
 
     public function getRouteTypes()
     {
-        foreach(['get', 'head', 'post', 'put', 'delete', 'connect', 'options', 'trace', 'patch'] as $key) {
+        foreach (['get', 'head', 'post', 'put', 'delete', 'connect', 'options', 'trace', 'patch'] as $key) {
             yield [$key];
         }
     }
@@ -84,13 +84,17 @@ class RouterTest extends TestCase
     /** @test */
     public function it_dispatches_a_group()
     {
-        $this->router->group('/api', 'api.', function(GroupRoute $group) {
-            $group->group('/v2', 'v2.', function(GroupRoute $group) {
-                $group->any('/users', function() { return 'Users data'; }, 'users');
+        $this->router->group('/api', 'api.', function (GroupRoute $group) {
+            $group->group('/v2', 'v2.', function (GroupRoute $group) {
+                $group->any('/users', function () {
+                    return 'Users data';
+                }, 'users');
             });
 
-            $group->group('/v3', 'v3.', function(GroupRoute $group) {
-                $group->any('/clients', function() { return 'Clients data'; }, 'clients');
+            $group->group('/v3', 'v3.', function (GroupRoute $group) {
+                $group->any('/clients', function () {
+                    return 'Clients data';
+                }, 'clients');
             });
         });
 
@@ -102,9 +106,11 @@ class RouterTest extends TestCase
     /** @test */
     public function it_throws_if_dispatch_route_not_found()
     {
-        $this->router->group('/api', 'api.', function(GroupRoute $group) {
-            $group->group('/v2', 'v2.', function(GroupRoute $group) {
-                $group->any('/users', function() { return 'Users data'; }, 'users');
+        $this->router->group('/api', 'api.', function (GroupRoute $group) {
+            $group->group('/v2', 'v2.', function (GroupRoute $group) {
+                $group->any('/users', function () {
+                    return 'Users data';
+                }, 'users');
             });
         });
 
@@ -116,8 +122,8 @@ class RouterTest extends TestCase
     /** @test */
     public function it_binds_in_params()
     {
-        $this->router->group('', null, function(GroupRoute $group) {
-            $group->bindIn('id', new class implements BindInStrategy {
+        $this->router->group('', null, function (GroupRoute $group) {
+            $group->bindIn('id', new class() implements BindInStrategy {
                 public function input($id)
                 {
                     return (object) ['id' => $id];
@@ -133,14 +139,15 @@ class RouterTest extends TestCase
     {
         $group = new GroupRoute('');
 
-        $group->bindOut('id', new class implements BindOutStrategy {
+        $group->bindOut('id', new class() implements BindOutStrategy {
             public function output($data)
             {
                 return $data->id;
             }
         });
 
-        $route = (new RequestRoute('/', function() {}))->setParent($group);
+        $route = (new RequestRoute('/', function () {
+        }))->setParent($group);
 
         $this->assertEquals(1, $route->bindOutParam('id', (object) ['id' => 1]));
     }
@@ -148,9 +155,9 @@ class RouterTest extends TestCase
     /** @test */
     public function it_binds_params()
     {
-        $this->router->bindCallable('id', function($id) {
+        $this->router->bindCallable('id', function ($id) {
             return (object) ['id' => $id];
-        }, function($data) {
+        }, function ($data) {
             return $data->id;
         });
 
@@ -162,8 +169,8 @@ class RouterTest extends TestCase
     /** @test */
     public function it_dispatch_error_action()
     {
-        $this->router->group('', null, function(GroupRoute $group) {
-            $group->setErrorAction(function() {
+        $this->router->group('', null, function (GroupRoute $group) {
+            $group->setErrorAction(function () {
                 return 'Error';
             });
 
@@ -188,13 +195,13 @@ class RouterTest extends TestCase
     /** @test */
     public function it_adds_custom_dispatcher()
     {
-        $this->router->setDispatcher(function($action) {
-            return function() use ($action) {
+        $this->router->setDispatcher(function ($action) {
+            return function () use ($action) {
                 return 'Call ' . $action;
             };
         });
 
-        $this->router->group('', null, function(GroupRoute $group) {
+        $this->router->group('', null, function (GroupRoute $group) {
             $group->any('/', 'index');
         });
 
@@ -242,7 +249,7 @@ class RouterTest extends TestCase
 
         $this->router->url('version');
     }
-    
+
     /** @test */
     public function it_allows_regex_param()
     {

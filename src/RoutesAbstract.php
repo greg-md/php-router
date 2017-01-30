@@ -117,8 +117,7 @@ abstract class RoutesAbstract extends RoutingAbstract
     public function bindCallable($name, callable $callableIn, ?callable $callableOut = null)
     {
         if ($callableOut) {
-            return $this->bind($name, new class($callableIn, $callableOut) implements BindInOutStrategy
-            {
+            return $this->bind($name, new class($callableIn, $callableOut) implements BindInOutStrategy {
                 private $callableIn;
 
                 private $callableOut;
@@ -142,8 +141,7 @@ abstract class RoutesAbstract extends RoutingAbstract
             });
         }
 
-        return $this->bindIn($name, new class($callableIn) implements BindInStrategy
-        {
+        return $this->bindIn($name, new class($callableIn) implements BindInStrategy {
             private $callableIn;
 
             function __construct(callable $callableIn, callable $callableOut)
@@ -227,6 +225,7 @@ abstract class RoutesAbstract extends RoutingAbstract
 
     /**
      * @param $type
+     *
      * @return RequestRoute[]
      */
     protected function requestTypeRoutes(?string $type): array
