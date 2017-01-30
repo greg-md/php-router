@@ -96,7 +96,7 @@ $router->get('/articles/{type:lifestyle|[a-z0-9-]+}[/page-{page:1#uint}]', 'Arti
 `type` parameter is required in the route. Default value is `lifestyle` and should consist of **letters, numbers and dashes**.
 
 `page` parameter is required in its segment, but the segment entirely is optional. Default value is `1` and should consist of **unsigned integers**.
-If the `page` will not be set or will be the same as default value, the entire segment will be excluded from the URL.
+If the parameter will not be set or will be the same as default value, the entire segment will be excluded from the URL.
 
 ```php
 echo $router->url('articles.type'); // result: /articles/lifestyle
