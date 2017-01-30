@@ -9,6 +9,16 @@
 
 A smarter router for web artisans.
 
+# Table of contents:
+
+* [Requirements](#requirements)
+* [How It Works](#how-it-works)
+* [Routing Schema](#routing-schema)
+* [Router](#router)
+* [Group Route](#group-route)
+* [Request Route](#request-route)
+* [Hidden Route](#hidden-route)
+
 # Requirements
 
 * PHP Version `^7.1`
