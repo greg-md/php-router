@@ -230,7 +230,13 @@ abstract class RoutesAbstract
      */
     protected function requestTypeRoutes(?string $method): array
     {
-        return Arr::getArray($this->requestRoutes, $method);
+        $routes = Arr::getArray($this->requestRoutes, $method);
+
+        if ($method) {
+            $routes = array_merge(Arr::getArray($this->requestRoutes, ''), $routes);
+        }
+
+        return $routes;
     }
 
     protected function newRequest(string $schema, $action): RequestRoute

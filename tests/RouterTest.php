@@ -33,6 +33,8 @@ class RouterTest extends TestCase
         });
 
         $this->assertEquals('Hello World!', $this->router->dispatch('/'));
+
+        $this->assertEquals('Hello World!', $this->router->dispatch('/', 'POST'));
     }
 
     /**
