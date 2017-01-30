@@ -53,5 +53,11 @@ echo $router->dispatch('/'); // result: Hello World!
 echo $router->dispatch('/user/1', 'POST');
 ```
 
+# Routing Schema
+
+Routing schema supports **parameters** and **optional segments**. What does it means? Let see in the example below:
+
+`/catalog/[/page-{page:1#uint}]`
+
 # Router
 
