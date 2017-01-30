@@ -228,5 +228,5 @@ $router->url('api.v1.users'); // result: /api/v1/users
 
 $router->url('api.v1.clients'); // throws: \Greg\Routing\RoutingException
 
-$router->url('api.v2.clients'); // throws: /api/v2/clients
+$router->url('api.v2.clients'); // result: /api/v2/clients
 ```
