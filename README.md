@@ -103,10 +103,13 @@ echo $router->url('articles.type'); // result: /articles/lifestyle
 
 echo $router->url('articles.type', ['type' => 'travel']); // result: /articles/travel
 
-echo $router->url('articles.type', ['page' => 1]); // result: /articles/lifestyle
+echo $router->url('articles.type', ['type' => 'travel', 'page' => 1]); // result: /articles/travel
 
-echo $router->url('articles.type', ['page' => 2]); // result: /articles/lifestyle/page-2
+echo $router->url('articles.type', ['type' => 'travel', 'page' => 2]); // result: /articles/travel/page-2
 ```
+
+As you can see, there are no more URLs where you can get duplicated content, which best for SEO.
+In this way, you can easily create good user friendly URLs.
 
 # Router
 
