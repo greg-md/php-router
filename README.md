@@ -75,7 +75,7 @@ Routing schema supports **parameters** and **optional segments**.
 `<default>` - Default value;  
 `<type>` - Parameter type. Supports `int`, `uint`, `boolean`(alias `bool`);  
 `<regex>` - Parameter regex;  
-`?` - Question symbol from the end determine if the parameter is optional or not.
+`?` - Question mark from the end determine if the parameter should be optional or not.
 
 > Only `<name>` is required in the parameter.
 
@@ -89,7 +89,7 @@ _Example:_
 
 Let say we have a page with all articles of the same type, including pagination. The route for this page will be:
 
-```
+```php
 $router->get('/articles/{type:lifestyle|[a-z0-9-]+}[/page-{page:1#uint}]', 'ArticlesController@type', 'articles.type');
 ```
 
