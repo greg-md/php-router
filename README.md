@@ -75,7 +75,7 @@ Routing schema supports **parameters** and **optional segments**.
 `<default>` - Default value;  
 `<type>` - Parameter type. Supports `int`, `uint`, `boolean`(or `bool`);  
 `<regex>` - Parameter regex;  
-`?` - Question mark from the end determine if the parameter should be optional or not.
+`?` - Question mark from the end determine if the parameter should be optional.
 
 > Only `<name>` is required in the parameter.
 
