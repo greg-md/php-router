@@ -53,7 +53,7 @@ echo $router->dispatch('/'); // result: Hello World!
 echo $router->dispatch('/user/1', 'POST');
 ```
 
-**And**, get URLs for them:
+**and**, get URLs for them:
 
 ```php
 $router->url('home'); // result: /
