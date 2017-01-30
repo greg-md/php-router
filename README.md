@@ -135,7 +135,7 @@ In this way, you can easily create good user friendly URLs.
     * [trace](#request) - Create a TRACE route;
     * [patch](#request) - Create a PATCH route;
 * [hidden](#hidden) - Create a hidden route. You can not dispatch it, but you can generate URLs from it;
-* [group](#group) - Create a hidden route;
+* [group](#group) - Create a group of routes;
 * [url](#url) - Get the URL of a route;
 * [bind](#bind) - Set an input/output binder for a parameter;
 * [bindCallable](#bindCallable) - Set an input/output binder for a parameter, using callable's;
@@ -159,7 +159,7 @@ In this way, you can easily create good user friendly URLs.
 Create a route for any request method.
 
 ```php
-any(string $schema, $action, ?string $name = null): RequestRoute
+any(string $schema, $action, ?string $name = null): \Greg\Routing\RequestRoute
 ```
 
 ## request
@@ -167,12 +167,66 @@ any(string $schema, $action, ?string $name = null): RequestRoute
 Create a route for a specific request method.
 
 ```php
-request(string $schema, $action, ?string $name = null, ?string $method = null): RequestRoute
+request(string $schema, $action, ?string $name = null, ?string $method = null): \Greg\Routing\RequestRoute
 ```
 
 You can also create a route method by calling the method name directly.
 Available types are: `GET`, `HEAD`, `POST`, `PUT`, `DELETE`, `CONNECT`, `OPTIONS`, `TRACE`, `PATCH`.
 
 ```php
-[get|head|post|put|delete|connect|options|trace|patch](string $schema, $action, ?string $name = null): RequestRoute
+[get|head|post|put|delete|connect|options|trace|patch](string $schema, $action, ?string $name = null): \Greg\Routing\RequestRoute
+```
+
+_Example:_
+
+```php
+$router->get('/users', function() {}, 'users');
+
+$router->post('/users/add', function() {}, 'users.add');
+```
+
+## hidden
+
+Create a hidden route. You can not dispatch it, but you can generate URLs from it.
+
+```php
+hidden(string $schema, string $name): \Greg\Routing\HiddenRoute
+```
+
+_Example:_
+
+```php
+$router->hidden('/catalog/{name}', 'partner.catalog')->setHost('mypartner.com');
+
+$router->url('partner.catalog', ['name' => 'cars']); // result: http://mypartner.com/catalog/cars
+```
+
+## group
+
+Create a group of routes.
+
+```php
+group(string $schema, ?string $prefix, callable $callable): \Greg\Routing\GroupRoute
+```
+
+_Example:_
+
+```php
+$router->group('/api', 'api.', function (GroupRoute $group) {
+    $group->group('/v1', 'v1.', function (GroupRoute $group) {
+        $group->any('/users', function () { return 'Users data'; }, 'users');
+    });
+
+    $group->group('/v2', 'v2.', function (GroupRoute $group) {
+        $group->any('/users', function () { return 'Users data'; }, 'users');
+        
+        $group->any('/clients', function () { return 'Clients data'; }, 'clients');
+    });
+});
+
+$router->url('api.v1.users'); // result: /api/v1/users
+
+$router->url('api.v1.clients'); // throws: \Greg\Routing\RoutingException
+
+$router->url('api.v2.clients'); // throws: /api/v2/clients
 ```
