@@ -18,13 +18,13 @@ A smarter router for web artisans.
 **First of all**, you have to initialize a Router:
 
 ```php
-$router = new Router();
+$router = new \Greg\Routing\Router();
 ```
 
 **Optionally**, you can add an action dispatcher to support custom action types.
 The dispatcher should return a callable of the action.
 
-Let say you want to support an action like `Controller@action`:
+Let say you want to support an action format like `Controller@action`:
 
 ```php
 $router->setDispatcher(function ($action) {
