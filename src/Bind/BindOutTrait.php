@@ -38,8 +38,8 @@ trait BindOutTrait
     public function bindOutParam(string $name, $value)
     {
         if ($binder = $this->binderOut($name)) {
-            if ($binder instanceof BindInStrategy) {
-                return $binder->input($value);
+            if ($binder instanceof BindOutStrategy) {
+                return $binder->output($value);
             }
 
             return Obj::call($binder, $value);

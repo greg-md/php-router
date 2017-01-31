@@ -116,7 +116,7 @@ class RouterTest extends TestCase
     public function it_binds_in_params()
     {
         $this->router->group('', null, function (GroupRoute $group) {
-            $group->bindIn('id', new class() implements BindInStrategy {
+            $group->bindInStrategy('id', new class() implements BindInStrategy {
                 public function input($id)
                 {
                     return (object) ['id' => $id];
@@ -132,7 +132,7 @@ class RouterTest extends TestCase
     {
         $group = new GroupRoute('');
 
-        $group->bindOut('id', new class() implements BindOutStrategy {
+        $group->bindOutStrategy('id', new class() implements BindOutStrategy {
             public function output($data)
             {
                 return $data->id;
