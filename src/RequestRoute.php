@@ -105,7 +105,7 @@ class RequestRoute implements FetchRouteStrategy
             if (strpos($action, '@') !== false) {
                 [$controllerName, $actionName] = explode('@', $action, 2);
 
-                $controller = new $controllerName;
+                $controller = new $controllerName();
 
                 if (!method_exists($controller, $actionName)) {
                     throw new \Exception('Action `' . $actionName . '` does not exists in ' . $controllerName . '` controller.');
