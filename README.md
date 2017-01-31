@@ -150,6 +150,8 @@ In this way, you can easily create good user friendly URLs.
 
 # Router
 
+Below you can find a list of **supported methods** of the `Router`.
+
 * [any](#any) - Create a route for any request method;
 * [request](#request) - Create a route for a specific request method;
     * [get](#request) - Create a GET route;
