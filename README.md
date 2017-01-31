@@ -77,6 +77,26 @@ $router->setDispatcher(function ($action) {
 });
 ```
 
+**Also**, you can inverse the control of the controller.
+
+Let say you want instantiate the controller with some custom data,
+or use some external IoC interface and run the init method if exists.
+
+```php
+$router->setIoc(function ($controllerName) {
+    // Let say you already have an IoC container.
+    global $iocContainer;
+
+    $controller = $iocContainer->load($controllerName);
+
+    if (method_exists($controller, 'init')) {
+        $controller->init();
+    }
+
+    return $controller;
+});
+```
+
 # Routing Schema
 
 Routing schema supports **parameters** and **optional segments**.
