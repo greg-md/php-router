@@ -637,3 +637,7 @@ Get the host.
 ```php
 getHost(): string
 ```
+
+# License
+
+MIT © [Grigorii Duca](http://greg.md)
