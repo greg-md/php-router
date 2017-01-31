@@ -41,7 +41,7 @@ $router->any('/', function() {
 $router->post('/user/{id#uint}', 'UsersController@save', 'user.save');
 ```
 
-> If you set an action like `Controller@action`, when dispatching it will create a new instance of `UsersController` and call the `save` public method.
+> If you set an action like `Controller@action`, when dispatching it will instantiate the `UsersController` and call the `save` public method.
 
 **Now**, you can dispatch URLs path:
 
@@ -64,20 +64,16 @@ $router->url('user.save', ['id' => 1]); // result: /user/id
 $router->url('user.save', ['id' => 1, 'debug' => true]); // result: /user/id?debug=true
 ```
 
-**Optionally**, you can add an action dispatcher to support custom actions.
-The dispatcher should return a callable of the action.
+**Optionally**, you can add an action dispatcher to make some changes for the action.
 
-Let say you want to support an action like `Controller@action`:
-
+Let say you want to add the `Action` suffix for action names:
 ```php
-$router->setDispatcher(function ($action): callable {
+$router->setDispatcher(function ($action) {
     if (is_callable($action)) {
         return $action;
     }
 
-    [$controllerName, $actionName] = explode('@', $action);
-    
-    return [new $controllerName, $actionName];
+    return $action . 'Action';
 });
 ```
 

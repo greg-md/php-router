@@ -98,14 +98,10 @@ class RequestRoute implements FetchRouteStrategy
         }
 
         if (is_scalar($action)) {
-            if ($parent = $this->getParent()) {
-                $action = $parent->getNamespace() . '\\' . $action;
-            }
-
             if (strpos($action, '@') !== false) {
                 [$controllerName, $actionName] = explode('@', $action, 2);
 
-                $controller = new $controllerName();
+                $controller = $this->fetchController($controllerName);
 
                 if (!method_exists($controller, $actionName)) {
                     throw new \Exception('Action `' . $actionName . '` does not exists in ' . $controllerName . '` controller.');
@@ -116,5 +112,24 @@ class RequestRoute implements FetchRouteStrategy
         }
 
         return $action;
+    }
+
+    protected function fetchController($controllerName)
+    {
+        if ($parent = $this->getParent()) {
+            $controllerName = $parent->getNamespace() . '\\' . $controllerName;
+        }
+
+        if ($ioc = $this->getIoc()) {
+            $controller = Obj::call($ioc, $controllerName);
+
+            if (!is_object($controller)) {
+                throw new \Exception('Controller `' . $controllerName . '` could not be instantiated.');
+            }
+
+            return $controller;
+        }
+
+        return new $controllerName;
     }
 }
