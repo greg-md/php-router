@@ -130,6 +130,6 @@ class RequestRoute implements FetchRouteStrategy
             return $controller;
         }
 
-        return new $controllerName;
+        return new $controllerName();
     }
 }
