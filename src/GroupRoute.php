@@ -42,6 +42,13 @@ class GroupRoute extends RoutesAbstract
         return parent::getDispatcher() ?: ($this->getParent() ? $this->getParent()->getDispatcher() : null);
     }
 
+    public function getNamespace(): ?string
+    {
+        $namespace = ($this->getParent() ? $this->getParent()->getNamespace() : null);
+
+        return $namespace . '\\' . parent::getNamespace();
+    }
+
     public function match(string $path, ?string $method = null): ?array
     {
         [$regex, $regexParams] = $this->schemaInfo();

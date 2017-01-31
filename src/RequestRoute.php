@@ -93,8 +93,26 @@ class RequestRoute implements FetchRouteStrategy
 
     protected function fetchAction($action)
     {
-        if (!is_callable($action) and $dispatcher = $this->getDispatcher()) {
+        if ($dispatcher = $this->getDispatcher()) {
             $action = Obj::call($dispatcher, $action);
+        }
+
+        if (is_scalar($action)) {
+            if ($parent = $this->getParent()) {
+                $action = $parent->getNamespace() . '\\' . $action;
+            }
+
+            if (strpos($action, '@') !== false) {
+                [$controllerName, $actionName] = explode('@', $action, 2);
+
+                $controller = new $controllerName;
+
+                if (!method_exists($controller, $actionName)) {
+                    throw new \Exception('Action `' . $actionName . '` does not exists in ' . $controllerName . '` controller.');
+                }
+
+                $action = [$controller, $actionName];
+            }
         }
 
         return $action;

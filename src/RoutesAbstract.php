@@ -30,6 +30,8 @@ abstract class RoutesAbstract
      */
     protected $hiddenRoutes = [];
 
+    private $namespace;
+
     public function any(string $schema, $action, ?string $name = null): RequestRoute
     {
         return $this->request($schema, $action, $name);
@@ -196,6 +198,18 @@ abstract class RoutesAbstract
         }
 
         return null;
+    }
+
+    public function setNamespace(string $namespace)
+    {
+        $this->namespace = $namespace;
+
+        return $this;
+    }
+
+    public function getNamespace(): ?string
+    {
+        return $this->namespace;
     }
 
     protected function getRoute(string $name): FetchRouteStrategy

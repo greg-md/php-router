@@ -31,28 +31,17 @@ A smarter router for web artisans.
 $router = new \Greg\Routing\Router();
 ```
 
-**Optionally**, you can add an action dispatcher to support custom actions.
-The dispatcher should return a callable of the action.
-
-Let say you want to support an action like `Controller@action`:
-
-```php
-$router->setDispatcher(function ($action): callable {
-    [$controllerName, $actionName] = explode('@', $action);
-    
-    return [new $controllerName, $actionName];
-});
-```
-
 **Then**, set up some routes:
 
 ```php
 $router->any('/', function() {
     return 'Hello World!';
 }, 'home');
-
+ 
 $router->post('/user/{id#uint}', 'UsersController@save', 'user.save');
 ```
+
+> If you set an action like `Controller@action`, when dispatching it will create a new instance of `UsersController` and call the `save` public method.
 
 **Now**, you can dispatch URLs path:
 
@@ -73,6 +62,23 @@ $router->url('home', ['foo' => 'bar']); // result: /?foo=bar
 $router->url('user.save', ['id' => 1]); // result: /user/id
 
 $router->url('user.save', ['id' => 1, 'debug' => true]); // result: /user/id?debug=true
+```
+
+**Optionally**, you can add an action dispatcher to support custom actions.
+The dispatcher should return a callable of the action.
+
+Let say you want to support an action like `Controller@action`:
+
+```php
+$router->setDispatcher(function ($action): callable {
+    if (is_callable($action)) {
+        return $action;
+    }
+
+    [$controllerName, $actionName] = explode('@', $action);
+    
+    return [new $controllerName, $actionName];
+});
 ```
 
 # Routing Schema
