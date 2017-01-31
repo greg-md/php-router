@@ -37,7 +37,11 @@ $router = new \Greg\Routing\Router();
 $router->any('/', function() {
     return 'Hello World!';
 }, 'home');
- 
+
+$router->get('/page/{page}.html', function($page) {
+    return "Hello on page {$page}!";
+}, 'page');
+
 $router->post('/user/{id#uint}', 'UsersController@save', 'user.save');
 ```
 
@@ -64,9 +68,10 @@ $router->url('user.save', ['id' => 1]); // result: /user/id
 $router->url('user.save', ['id' => 1, 'debug' => true]); // result: /user/id?debug=true
 ```
 
-**Optionally**, you can add an action dispatcher to make some changes for the action.
+**Optionally**, you can add a dispatcher to manage actions.
 
-Let say you want to add the `Action` suffix for action names:
+Let say you want to add the `Action` suffix to action names:
+
 ```php
 $router->setDispatcher(function ($action) {
     if (is_callable($action)) {
@@ -77,7 +82,7 @@ $router->setDispatcher(function ($action) {
 });
 ```
 
-**Also**, you can inverse the control of the controller.
+**Also**, you can inverse the control of the controllers.
 
 Let say you want instantiate the controller with some custom data,
 or use some external IoC interface and run the init method if exists.
@@ -159,22 +164,28 @@ In this way, you can easily create good user friendly URLs.
 * [hidden](#hidden) - Create a hidden route. You can not dispatch it, but you can generate URLs from it;
 * [group](#group) - Create a group of routes;
 * [url](#url) - Get the URL of a route;
-* [bind](#bind) - Set an input/output binder for a parameter;
-* [bindCallable](#bindCallable) - Set an input/output binder for a parameter, using callable's;
-* [bindIn](#bindIn) - Set an input binder for a parameter;
-* [binderIn](#binderIn) - Get the input binder of a parameter;
-* [bindInParam](#bindInParam) - Bind an input parameter;
-* [bindOut](#bindOut) - Set an output binder for a parameter;
-* [binderOut](#binderOut) - Get the output binder of a parameter;
-* [bindOutParam](#bindOutParam) - Bind an output parameter;
-* [setErrorAction](setErrorAction) - Set error action;
-* [getErrorAction](getErrorAction) - Get error action;
-* [setDispatcher](setDispatcher) - Set dispatcher;
-* [getDispatcher](getDispatcher) - Get dispatcher;
-* [setHost](setHost) - Set host;
-* [getHost](getHost) - Get host;
 * [dispatch](#dispatch) - Dispatch an URL path;
-* [findRoute](#findRoute) - Find a route by name;
+* [find](#find) - Find a route by name;
+* [bind](#bind) - Set an input/output binder for a parameter;
+* [bindStrategy](#bindstrategy) - Set an input/output binder for a parameter, using strategy;
+* [bindIn](#bindin) - Set an input binder for a parameter;
+* [bindInStrategy](#bindinstrategy) - Set an input binder for a parameter, using strategy;
+* [binderIn](#binderin) - Get the input binder of a parameter;
+* [bindInParam](#bindinparam) - Bind an input parameter;
+* [bindOut](#bindout) - Set an output binder for a parameter;
+* [bindOutStrategy](#bindoutstrategy) - Set an output binder for a parameter, using strategy;
+* [binderOut](#binderout) - Get the output binder of a parameter;
+* [bindOutParam](#bindoutparam) - Bind an output parameter;
+* [setDispatcher](#setdispatcher) - Set an action dispatcher;
+* [getDispatcher](#getdispatcher) - Get the actions dispatcher;
+* [setIoc](#setioc) - Set an inversion of control for controllers;
+* [getIoc](#getioc) - Get the inversion of control;
+* [setNamespace](#setnamespace) - Set a namespace;
+* [getNamespace](#getnamespace) - Get the namespace;
+* [setErrorAction](#seterroraction) - Set an error action;
+* [getErrorAction](#geterroraction) - Get the error action;
+* [setHost](#sethost) - Set a host;
+* [getHost](#gethost) - Get the host.
 
 ## any
 
@@ -192,7 +203,7 @@ Create a route for a specific request method.
 request(string $schema, $action, ?string $name = null, ?string $method = null): \Greg\Routing\RequestRoute
 ```
 
-You can also create a route method by calling the method name directly.
+You can also create a specific request method by calling the method name directly.
 Available types are: `GET`, `HEAD`, `POST`, `PUT`, `DELETE`, `CONNECT`, `OPTIONS`, `TRACE`, `PATCH`.
 
 ```php
@@ -202,9 +213,9 @@ Available types are: `GET`, `HEAD`, `POST`, `PUT`, `DELETE`, `CONNECT`, `OPTIONS
 _Example:_
 
 ```php
-$router->get('/users', function() {}, 'users');
+$router->get('/users', 'UsersController@index', 'users');
 
-$router->post('/users/add', function() {}, 'users.add');
+$router->post('/users/add', 'UsersController@add', 'users.add');
 ```
 
 ## hidden
@@ -234,15 +245,15 @@ group(string $schema, ?string $prefix, callable $callable): \Greg\Routing\GroupR
 _Example:_
 
 ```php
-$router->group('/api', 'api.', function (GroupRoute $group) {
-    $group->group('/v1', 'v1.', function (GroupRoute $group) {
-        $group->any('/users', function () { return 'Users data'; }, 'users');
+$router->group('/api', 'api.', function (\Greg\Routing\GroupRoute $group) {
+    $group->group('/v1', 'v1.', function (\Greg\Routing\GroupRoute $group) {
+        $group->any('/users', 'UsersController@index', 'users');
     });
 
-    $group->group('/v2', 'v2.', function (GroupRoute $group) {
-        $group->any('/users', function () { return 'Users data'; }, 'users');
+    $group->group('/v2', 'v2.', function (\Greg\Routing\GroupRoute $group) {
+        $group->any('/users', 'UsersController@index', 'users');
         
-        $group->any('/clients', function () { return 'Clients data'; }, 'clients');
+        $group->any('/clients', 'ClientsController@index', 'clients');
     });
 });
 
@@ -251,4 +262,378 @@ $router->url('api.v1.users'); // result: /api/v1/users
 $router->url('api.v1.clients'); // throws: \Greg\Routing\RoutingException
 
 $router->url('api.v2.clients'); // result: /api/v2/clients
+```
+
+## url
+
+Get the URL of a route.
+
+```php
+url(string $name, array $params = []): string
+```
+
+_Example:_
+
+```php
+$router->get('/page/{page}.html', function($page) {
+    return "Hello on page {$page}!";
+}, 'page');
+
+$router->url('page', ['page' => 'terms']); // result: /page/terms.html
+
+$router->url('page', ['page' => 'terms', 'foo' => 'bar']); // result: /page/terms.html?foo=bar
+```
+
+## dispatch
+
+Dispatch an URL path.
+
+```php
+dispatch(string $name, array $params = []): string
+```
+
+_Example:_
+
+```php
+echo $router->dispatch('/'); // Dispatch any route
+
+echo $router->dispatch('/user/1', 'POST'); // Dispatch a POST route
+```
+
+## find
+
+Find a route by name.
+
+```php
+find(string $name): ?\Greg\Routing\FetchRouteStrategy
+```
+
+_Example:_
+
+```php
+$route = $router->find('users.save');
+
+$route->url(['foo' => 'bar']);
+```
+
+## bind
+
+Set an input/output binder for a parameter.
+
+```php
+bind($name, callable $callableIn, ?callable $callableOut = null): $this
+```
+
+_Example:_
+
+```php
+$this->bind('id', function($id) {
+    $user = (object) ['id' => $id];
+
+    return $user;
+}, function($user) {
+    return $user->id;
+});
+```
+
+## bindStrategy
+
+Set an input/output binder for a parameter, using strategy.
+
+```php
+bindStrategy(string $name, \Greg\Routing\BindInOutStrategy $strategy): $this
+```
+
+_Example:_
+
+```php
+$this->bindStrategy('id', new class implements BindInOutStrategy {
+    public function input($id)
+    {
+        $user = (object) ['id' => $id];
+
+        return $user;
+    }
+
+    public function output($user)
+    {
+        return $user->id;
+    }
+});
+```
+
+## bindIn
+
+Set an input binder for a parameter.
+
+```php
+bindIn($name, callable $callable): $this
+```
+
+_Example:_
+
+```php
+$this->bindIn('id', function($id) {
+    $user = (object) ['id' => $id];
+
+    return $user;
+});
+```
+
+## bindInStrategy
+
+Set an input binder for a parameter, using strategy.
+
+```php
+bindInStrategy($name, \Greg\Routing\BindInStrategy $callable): $this
+```
+
+_Example:_
+
+```php
+$this->bindInStrategy('id', new class implements \Greg\Routing\BindInStrategy {
+    public function input($id)
+    {
+        $user = (object) ['id' => $id];
+
+        return $user;
+    }
+});
+```
+
+## binderIn
+
+Get the input binder of a parameter.
+
+```php
+binderIn(string $name): \Greg\Routing\BindInStrategy|callable
+```
+
+_Example:_
+
+```php
+$binder = $router->binderIn('id');
+
+if (is_callable($binder)) {
+    $user = $binder(1);
+} else {
+    $user = $binder->input(1);
+}
+```
+
+## bindInParam
+
+Bind an input parameter.
+
+```php
+bindInParam(string $name, $value): mixed
+```
+
+_Example:_
+
+```php
+$user = $router->bindInParam('id', 1);
+```
+
+## bindOut
+
+Set an output binder for a parameter.
+
+```php
+bindOut($name, callable $callable): $this
+```
+
+_Example:_
+
+```php
+$this->bindOut('id', function($user) {
+    return $user->id;
+});
+```
+
+## bindOutStrategy
+
+Set an output binder for a parameter, using strategy.
+
+```php
+bindOutStrategy($name, \Greg\Routing\BindOutStrategy $callable): $this
+```
+
+_Example:_
+
+```php
+$this->bindOutStrategy('id', new class implements \Greg\Routing\BindOutStrategy {
+    public function output($user)
+    {
+        return $user->id;
+    }
+});
+```
+
+## binderOut
+
+Get the output binder of a parameter.
+
+```php
+binderOut(string $name): \Greg\Routing\BindOutStrategy|callable
+```
+
+_Example:_
+
+```php
+$binder = $router->binderOut('id');
+
+if (is_callable($binder)) {
+    $id = $binder($user);
+} else {
+    $id = $binder->output($user);
+}
+```
+
+## bindOutParam
+
+Bind an output parameter.
+
+```php
+bindOutParam(string $name, $value): mixed
+```
+
+_Example:_
+
+```php
+$user = $router->bindOutParam('id', 1);
+```
+
+## setDispatcher
+
+Set an action dispatcher.
+
+```php
+setDispatcher(callable $callable): $this
+```
+
+_Example:_
+
+Let say you want to add the `Action` suffix to action names:
+
+```php
+$router->setDispatcher(function ($action) {
+    if (is_callable($action)) {
+        return $action;
+    }
+
+    return $action . 'Action';
+});
+```
+
+## getDispatcher
+
+Get the actions dispatcher.
+
+```php
+getDispatcher(): callable
+```
+
+## setIoc
+
+Set an inversion of control for controllers.
+
+```php
+setIoc(callable $callable): $this
+```
+
+_Example:_
+
+Let say you want instantiate the controller with some custom data,
+or use some external IoC interface and run the init method if exists.
+
+```php
+$router->setIoc(function ($controllerName) {
+    // Let say you already have an IoC container.
+    global $iocContainer;
+
+    $controller = $iocContainer->load($controllerName);
+
+    if (method_exists($controller, 'init')) {
+        $controller->init();
+    }
+
+    return $controller;
+});
+```
+
+## getIoc
+
+Get the inversion of control.
+
+```php
+getIoc(): callable
+```
+
+## setNamespace
+
+Set a namespace.
+
+```php
+setNamespace(string $namespace): $this
+```
+
+_Example:_
+
+```php
+$router->setNamespace('Http');
+```
+
+## getNamespace
+
+Get the namespace.
+
+```php
+getNamespace(): string
+```
+
+## setErrorAction
+
+Set error action.
+
+```php
+setErrorAction($action): $this
+```
+
+_Example:_
+
+```php
+$router->setErrorAction(function() {
+    return 'Ooops! Something has gone wrong.'
+});
+```
+
+## getErrorAction
+
+Get error action.
+
+```php
+getErrorAction(): mixed
+```
+
+## setHost
+
+Set a host.
+
+```php
+setHost(string $host): $this
+```
+
+_Example:_
+
+```php
+$router->setHost('example.com');
+```
+
+## getHost
+
+Get the host.
+
+```php
+getHost(): string
 ```

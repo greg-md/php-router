@@ -4,9 +4,9 @@ namespace Greg\Routing;
 
 use Greg\Routing\Bind\BindOutTrait;
 
-class HiddenRoute implements FetchRouteStrategy
+class HiddenRoute implements RouteStrategy
 {
-    use RouteTrait, BindOutTrait, HostTrait, FetchRouteTrait;
+    use RoutingTrait, BindOutTrait, HostTrait, RouteTrait;
 
     public function __construct(string $schema)
     {

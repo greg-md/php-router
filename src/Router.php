@@ -6,6 +6,6 @@ class Router extends RoutesAbstract
 {
     public function url(string $name, array $params = []): string
     {
-        return $this->getRoute($name)->fetch($params);
+        return $this->getRoute($name)->url($params);
     }
 }

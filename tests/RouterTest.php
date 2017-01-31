@@ -148,7 +148,7 @@ class RouterTest extends TestCase
     /** @test */
     public function it_binds_params()
     {
-        $this->router->bindCallable('id', function ($id) {
+        $this->router->bind('id', function ($id) {
             return (object) ['id' => $id];
         }, function ($data) {
             return $data->id;
@@ -224,13 +224,13 @@ class RouterTest extends TestCase
 
         $this->assertEquals('/api', $data->path());
 
-        $this->assertEquals('/api', $route->fetch());
+        $this->assertEquals('/api', $route->url());
 
-        $this->assertEquals('/api', $route->fetch(['v' => 2]));
+        $this->assertEquals('/api', $route->url(['v' => 2]));
 
-        $this->assertEquals('/api/v/1', $route->fetch(['vv' => 1]));
+        $this->assertEquals('/api/v/1', $route->url(['vv' => 1]));
 
-        $this->assertEquals('/api/v2/1', $route->fetch(['v' => 2, 'vv' => 1]));
+        $this->assertEquals('/api/v2/1', $route->url(['v' => 2, 'vv' => 1]));
     }
 
     /** @test */
@@ -248,13 +248,13 @@ class RouterTest extends TestCase
     {
         $route = new RequestRoute('/user/{id:1|[0-9]+}', null);
 
-        $this->assertEquals('/user/1', $route->fetch([]));
+        $this->assertEquals('/user/1', $route->url([]));
 
-        $this->assertEquals('/user/2', $route->fetch(['id' => 2]));
+        $this->assertEquals('/user/2', $route->url(['id' => 2]));
 
         $this->expectException(RoutingException::class);
 
-        $route->fetch(['id' => 'test']);
+        $route->url(['id' => 'test']);
     }
 
     /** @test */
@@ -276,7 +276,7 @@ class RouterTest extends TestCase
 
         $this->expectException(RoutingException::class);
 
-        $route->fetch(['id' => 'test']);
+        $route->url(['id' => 'test']);
     }
 
     /** @test */

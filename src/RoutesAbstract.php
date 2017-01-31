@@ -107,55 +107,24 @@ abstract class RoutesAbstract
         return $route;
     }
 
-    public function bind(string $name, BindInOutStrategy $strategy)
+    public function bind($name, callable $callableIn, ?callable $callableOut = null)
     {
-        $this->bindIn($name, $strategy);
+        $this->bindIn($name, $callableIn);
 
-        $this->bindOut($name, $strategy);
+        if ($callableOut) {
+            $this->bindOut($name, $callableOut);
+        }
 
         return $this;
     }
 
-    public function bindCallable($name, callable $callableIn, ?callable $callableOut = null)
+    public function bindStrategy(string $name, BindInOutStrategy $strategy)
     {
-        if ($callableOut) {
-            return $this->bind($name, new class($callableIn, $callableOut) implements BindInOutStrategy {
-                private $callableIn;
+        $this->bindInStrategy($name, $strategy);
 
-                private $callableOut;
+        $this->bindOutStrategy($name, $strategy);
 
-                function __construct(callable $callableIn, callable $callableOut)
-                {
-                    $this->callableIn = $callableIn;
-
-                    $this->callableOut = $callableOut;
-                }
-
-                public function input($value)
-                {
-                    return Obj::call($this->callableIn, $value);
-                }
-
-                public function output($value)
-                {
-                    return Obj::call($this->callableOut, $value);
-                }
-            });
-        }
-
-        return $this->bindIn($name, new class($callableIn) implements BindInStrategy {
-            private $callableIn;
-
-            function __construct(callable $callableIn, callable $callableOut)
-            {
-                $this->callableIn = $callableIn;
-            }
-
-            public function input($value)
-            {
-                return Obj::call($this->callableIn, $value);
-            }
-        });
+        return $this;
     }
 
     public function dispatch(string $path, ?string $method = null): string
@@ -177,7 +146,7 @@ abstract class RoutesAbstract
         throw new RoutingException('Route for path `' . $path . '` not found.');
     }
 
-    public function findRoute(string $name): ?FetchRouteStrategy
+    public function find(string $name): ?RouteStrategy
     {
         if ($requestRoute = $this->findRequestRoute($name)) {
             return $requestRoute;
@@ -192,7 +161,7 @@ abstract class RoutesAbstract
                 continue;
             }
 
-            if ($route = $group->findRoute(Str::shift($name, $prefix))) {
+            if ($route = $group->find(Str::shift($name, $prefix))) {
                 return $route;
             }
         }
@@ -212,9 +181,9 @@ abstract class RoutesAbstract
         return $this->namespace;
     }
 
-    protected function getRoute(string $name): FetchRouteStrategy
+    protected function getRoute(string $name): RouteStrategy
     {
-        if ($route = $this->findRoute($name)) {
+        if ($route = $this->find($name)) {
             return $route;
         }
 

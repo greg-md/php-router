@@ -20,9 +20,9 @@ trait DispatcherTrait
         return $this->dispatcher;
     }
 
-    public function setIoc(callable $ioc)
+    public function setIoc(callable $callable)
     {
-        $this->ioc = $ioc;
+        $this->ioc = $callable;
 
         return $this;
     }

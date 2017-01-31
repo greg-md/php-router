@@ -8,7 +8,7 @@ use Greg\Support\Tools\Regex;
 
 class GroupRoute extends RoutesAbstract
 {
-    use RouteTrait;
+    use RoutingTrait;
 
     public function __construct(string $schema)
     {
