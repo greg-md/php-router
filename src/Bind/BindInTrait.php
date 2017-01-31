@@ -27,6 +27,7 @@ trait BindInTrait
 
     /**
      * @param string $name
+     *
      * @return BindInStrategy|callable
      */
     public function binderIn(string $name)

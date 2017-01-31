@@ -27,6 +27,7 @@ trait BindOutTrait
 
     /**
      * @param string $name
+     *
      * @return BindOutStrategy|callable
      */
     public function binderOut(string $name)
