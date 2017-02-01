@@ -2,7 +2,7 @@
   "name": "greg-md/php-routing",
   "type": "library",
   "description": "Greg PHP Routing",
-  "keywords": [ "greg", "php-routing" ],
+  "keywords": [ "greg-md", "greg-php", "php-routing", "routing", "php", "router", "web-artisans" ],
   "homepage": "https://github.com/greg-md/php-routing",
   "license": "MIT",
   "authors": [
