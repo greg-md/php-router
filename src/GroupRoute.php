@@ -51,13 +51,14 @@ class GroupRoute extends RoutesAbstract
 
     public function match(string $path, ?string $method = null, RouteStrategy &$route = null, RouteData &$data = null): bool
     {
-        [$regex, $regexParams] = $this->schemaInfo();
+        $info = $this->schemaInfo();
 
-        if (preg_match(Regex::pattern('^' . $regex . '(?\'child\'.*)'), $path, $matches)) {
+        if (preg_match(Regex::pattern('^' . $info['regex'] . '(?\'child\'.*)'), $path, $matches)) {
             if (!$this->matchChild($matches['child'], $method, $route, $data)) {
                 return false;
             }
-            [$cleanParams, $params] = $this->fetchMatchedParams($regexParams, $matches);
+
+            [$cleanParams, $params] = $this->fetchMatchedParams($info['params'], $matches);
 
             $data = new RouteData($path, $data->params() + $params, $data->cleanParams() + $cleanParams);
 

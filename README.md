@@ -233,6 +233,11 @@ echo $router->dispatch('/user/1', 'POST'); // Dispatch a POST route
 Below you can find a list of **supported methods** of the `GroupRoute`.
 
 * [match](#match) - Match a path against routes;
+* [schema](#schema) - Get the schema;
+* [schemaInfo](#schemaInfo) - Get information about schema;
+* [setParent](#setParent) - Set parent routing;
+* [getParent](#getParent) - Get parent routing;
+* [path](#path) - Generate the path;
 * [any](#any) - Create a route for any request method;
 * [request](#request) - Create a route for a specific request method;
     * [get](#request) - Create a GET route;
@@ -298,6 +303,46 @@ _Example:_
 if ($group->match('/', 'GET', $route, $data)) {
     echo $route->exec($data);
 }
+```
+
+## schema
+
+Get the schema.
+
+```php
+schema(): ?string
+```
+
+## schemaInfo
+
+Get information about schema.
+
+```php
+schemaInfo(): ['regex', 'params']
+```
+
+## setParent
+
+Set parent routing.
+
+```php
+setParent(RoutesAbstract $parent): $this
+```
+
+## getParent
+
+Get parent routing.
+
+```php
+getParent(): RoutesAbstract
+```
+
+## path
+
+Generate the path.
+
+```php
+path(array $params = []): array
 ```
 
 # Routing Abstract

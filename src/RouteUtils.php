@@ -68,7 +68,10 @@ class RouteUtils
             return self::schemaMatchedInfo($matches, $segments);
         }
 
-        return [Regex::quote($schema), []];
+        return [
+            'regex' => Regex::quote($schema),
+            'params' => [],
+        ];
     }
 
     public static function splitParam(string $param): array
@@ -168,16 +171,19 @@ class RouteUtils
 
                     $regex .= "(?'{$param['name']}'{$paramRegex})" . $matches['paramOptional'][$key];
                 } elseif ($segment = $matches['segment'][$key]) {
-                    [$segmentRegex, $segmentParams] = static::schemaInfo($segment);
+                    $info = static::schemaInfo($segment);
 
-                    $params = array_merge($params, $segmentParams);
+                    $params = array_merge($params, $info['params']);
 
-                    $regex .= "(?:{$segmentRegex})?";
+                    $regex .= "(?:{$info['regex']})?";
                 }
             }
         }
 
-        return [$regex, $params];
+        return [
+            'regex' => $regex,
+            'params' => $params,
+        ];
     }
 
     private static function paramFetchRegex(string $regex): string

@@ -3,7 +3,6 @@
 namespace Greg\Routing;
 
 use Greg\Routing\Bind\BindInOutStrategy;
-use Greg\Routing\Bind\BindInStrategy;
 use Greg\Routing\Bind\BindInTrait;
 use Greg\Routing\Bind\BindOutTrait;
 use Greg\Support\Arr;

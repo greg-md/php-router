@@ -51,10 +51,10 @@ class RequestRoute implements RouteStrategy
 
     public function match(string $path, RouteData &$data = null): bool
     {
-        [$regex, $regexParams] = $this->schemaInfo();
+        $info = $this->schemaInfo();
 
-        if (preg_match(Regex::pattern('^' . $regex . '$'), $path, $matches)) {
-            [$cleanParams, $params] = $this->fetchMatchedParams($regexParams, $matches);
+        if (preg_match(Regex::pattern('^' . $info['regex'] . '$'), $path, $matches)) {
+            [$cleanParams, $params] = $this->fetchMatchedParams($info['params'], $matches);
 
             $data = new RouteData($path, $params, $cleanParams);
 
