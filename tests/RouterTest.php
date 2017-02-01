@@ -216,7 +216,7 @@ class RouterTest extends TestCase
     {
         $route = new RequestRoute($schema = '/api[/v{v}?/{vv}]', null);
 
-        /** @var RouteData $data */
+        /* @var RouteData $data */
         $this->assertTrue($route->match('/api', $data));
 
         $this->assertEquals($schema, $route->schema());
@@ -263,7 +263,7 @@ class RouterTest extends TestCase
     {
         $route = new RequestRoute('/{id#int}', null);
 
-        /** @var RouteData $data */
+        /* @var RouteData $data */
         $this->assertTrue($route->match('/1', $data));
 
         $this->assertInstanceOf(RouteData::class, $data);
@@ -286,7 +286,7 @@ class RouterTest extends TestCase
     {
         $route = new RequestRoute('/{id#uint}', null);
 
-        /** @var RouteData $data */
+        /* @var RouteData $data */
         $this->assertTrue($route->match('/1', $data));
 
         $this->assertInstanceOf(RouteData::class, $data);
@@ -301,7 +301,7 @@ class RouterTest extends TestCase
     {
         $route = new RequestRoute('/{id|*}', null);
 
-        /** @var RouteData $data */
+        /* @var RouteData $data */
         $this->assertTrue($route->match('/1/1', $data));
 
         $this->assertInstanceOf(RouteData::class, $data);
@@ -314,7 +314,7 @@ class RouterTest extends TestCase
     {
         $route = new RequestRoute('/{id#boolean}', null);
 
-        /** @var RouteData $data */
+        /* @var RouteData $data */
         $this->assertTrue($route->match('/1', $data));
 
         $this->assertInstanceOf(RouteData::class, $data);
