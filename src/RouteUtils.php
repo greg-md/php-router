@@ -69,7 +69,7 @@ class RouteUtils
         }
 
         return [
-            'regex' => Regex::quote($schema),
+            'regex'  => Regex::quote($schema),
             'params' => [],
         ];
     }
@@ -181,7 +181,7 @@ class RouteUtils
         }
 
         return [
-            'regex' => $regex,
+            'regex'  => $regex,
             'params' => $params,
         ];
     }

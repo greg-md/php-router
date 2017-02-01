@@ -57,7 +57,6 @@ class GroupRoute extends RoutesAbstract
             if (!$this->matchChild($matches['child'], $method, $route, $data)) {
                 return false;
             }
-
             [$cleanParams, $params] = $this->fetchMatchedParams($info['params'], $matches);
 
             $data = new RouteData($path, $data->params() + $params, $data->cleanParams() + $cleanParams);
