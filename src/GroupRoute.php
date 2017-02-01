@@ -49,43 +49,39 @@ class GroupRoute extends RoutesAbstract
         return $namespace . '\\' . parent::getNamespace();
     }
 
-    public function match(string $path, ?string $method = null): ?array
+    public function match(string $path, ?string $method = null, RouteStrategy &$route = null, RouteData &$data = null): bool
     {
         [$regex, $regexParams] = $this->schemaInfo();
 
         if (preg_match(Regex::pattern('^' . $regex . '(?\'child\'.*)'), $path, $matches)) {
-            if (!$matched = $this->matchChild($matches['child'], $method)) {
-                return null;
+            if (!$this->matchChild($matches['child'], $method, $route, $data)) {
+                return false;
             }
-
-            /* @var RequestRoute $route */
-            /* @var RouteData $data */
-            [$route, $data] = $matched;
 
             [$cleanParams, $params] = $this->fetchMatchedParams($regexParams, $matches);
 
             $data = new RouteData($path, $data->params() + $params, $data->cleanParams() + $cleanParams);
 
-            return [$route, $data];
+            return true;
         }
 
-        return null;
+        return false;
     }
 
-    protected function matchChild(string $path, ?string $method = null): ?array
+    protected function matchChild(string $path, ?string $method = null, RouteStrategy &$route = null, RouteData &$data = null): bool
     {
         foreach ($this->requestTypeRoutes($method) as $route) {
-            if ($data = $route->match($path)) {
-                return [$route, $data];
+            if ($route->match($path, $data)) {
+                return true;
             }
         }
 
         foreach ($this->groupRoutes as $group) {
-            if ($matched = $group->match($path, $method)) {
-                return $matched;
+            if ($group->match($path, $method, $route, $data)) {
+                return true;
             }
         }
 
-        return null;
+        return false;
     }
 }

@@ -152,6 +152,8 @@ In this way, you can easily create good user friendly URLs.
 
 Below you can find a list of **supported methods** of the `Router`.
 
+* [url](#url) - Get the URL of a route;
+* [dispatch](#dispatch) - Dispatch an URL path;
 * [any](#any) - Create a route for any request method;
 * [request](#request) - Create a route for a specific request method;
     * [get](#request) - Create a GET route;
@@ -165,8 +167,6 @@ Below you can find a list of **supported methods** of the `Router`.
     * [patch](#request) - Create a PATCH route;
 * [hidden](#hidden) - Create a hidden route. You can not dispatch it, but you can generate URLs from it;
 * [group](#group) - Create a group of routes;
-* [url](#url) - Get the URL of a route;
-* [dispatch](#dispatch) - Dispatch an URL path;
 * [find](#find) - Find a route by name;
 * [bind](#bind) - Set an input/output binder for a parameter;
 * [bindStrategy](#bindstrategy) - Set an input/output binder for a parameter, using strategy;
@@ -188,6 +188,119 @@ Below you can find a list of **supported methods** of the `Router`.
 * [getErrorAction](#geterroraction) - Get the error action;
 * [setHost](#sethost) - Set a host;
 * [getHost](#gethost) - Get the host.
+
+## url
+
+Get the URL of a route.
+
+```php
+url(string $name, array $params = []): string
+```
+
+_Example:_
+
+```php
+$router->get('/page/{page}.html', function($page) {
+    return "Hello on page {$page}!";
+}, 'page');
+
+$router->url('page', ['page' => 'terms']); // result: /page/terms.html
+
+$router->url('page', ['page' => 'terms', 'foo' => 'bar']); // result: /page/terms.html?foo=bar
+```
+
+## dispatch
+
+Dispatch an URL path.
+
+```php
+dispatch(string $name, array $params = []): string
+```
+
+_Example:_
+
+```php
+echo $router->dispatch('/'); // Dispatch any route
+
+echo $router->dispatch('/user/1', 'POST'); // Dispatch a POST route
+```
+
+# Group Route
+
+**Magic methods:**
+* [__construct](#__construct)
+
+Below you can find a list of **supported methods** of the `GroupRoute`.
+
+* [match](#match) - Match a path against routes;
+* [any](#any) - Create a route for any request method;
+* [request](#request) - Create a route for a specific request method;
+    * [get](#request) - Create a GET route;
+    * [head](#request) - Create a HEAD route;
+    * [post](#request) - Create a POST route;
+    * [put](#request) - Create a PUT route;
+    * [delete](#request) - Create a DELETE route;
+    * [connect](#request) - Create a CONNECT route;
+    * [options](#request) - Create a OPTIONS route;
+    * [trace](#request) - Create a TRACE route;
+    * [patch](#request) - Create a PATCH route;
+* [hidden](#hidden) - Create a hidden route. You can not dispatch it, but you can generate URLs from it;
+* [group](#group) - Create a group of routes;
+* [find](#find) - Find a route by name;
+* [bind](#bind) - Set an input/output binder for a parameter;
+* [bindStrategy](#bindstrategy) - Set an input/output binder for a parameter, using strategy;
+* [bindIn](#bindin) - Set an input binder for a parameter;
+* [bindInStrategy](#bindinstrategy) - Set an input binder for a parameter, using strategy;
+* [binderIn](#binderin) - Get the input binder of a parameter;
+* [bindInParam](#bindinparam) - Bind an input parameter;
+* [bindOut](#bindout) - Set an output binder for a parameter;
+* [bindOutStrategy](#bindoutstrategy) - Set an output binder for a parameter, using strategy;
+* [binderOut](#binderout) - Get the output binder of a parameter;
+* [bindOutParam](#bindoutparam) - Bind an output parameter;
+* [setDispatcher](#setdispatcher) - Set an action dispatcher;
+* [getDispatcher](#getdispatcher) - Get the actions dispatcher;
+* [setIoc](#setioc) - Set an inversion of control for controllers;
+* [getIoc](#getioc) - Get the inversion of control;
+* [setNamespace](#setnamespace) - Set a namespace;
+* [getNamespace](#getnamespace) - Get the namespace;
+* [setErrorAction](#seterroraction) - Set an error action;
+* [getErrorAction](#geterroraction) - Get the error action;
+* [setHost](#sethost) - Set a host;
+* [getHost](#gethost) - Get the host.
+
+## __construct
+
+Initialize the route group.
+
+```php
+__construct(string $schema)
+```
+
+_Example:_
+
+```php
+$group = new \Greg\Routing\GroupRoute('/api/v1');
+
+$group->get('/user');
+```
+
+## match
+
+Match a path against routes.
+
+```php
+match(string $path, ?string $method = null, \Greg\Routing\RouteStrategy &$route = null, \Greg\Routing\RouteData &$data = null): bool
+```
+
+_Example:_
+
+```php
+if ($group->match('/', 'GET', $route, $data)) {
+    echo $route->exec($data);
+}
+```
+
+# Routing Abstract
 
 ## any
 
@@ -264,42 +377,6 @@ $router->url('api.v1.users'); // result: /api/v1/users
 $router->url('api.v1.clients'); // throws: \Greg\Routing\RoutingException
 
 $router->url('api.v2.clients'); // result: /api/v2/clients
-```
-
-## url
-
-Get the URL of a route.
-
-```php
-url(string $name, array $params = []): string
-```
-
-_Example:_
-
-```php
-$router->get('/page/{page}.html', function($page) {
-    return "Hello on page {$page}!";
-}, 'page');
-
-$router->url('page', ['page' => 'terms']); // result: /page/terms.html
-
-$router->url('page', ['page' => 'terms', 'foo' => 'bar']); // result: /page/terms.html?foo=bar
-```
-
-## dispatch
-
-Dispatch an URL path.
-
-```php
-dispatch(string $name, array $params = []): string
-```
-
-_Example:_
-
-```php
-echo $router->dispatch('/'); // Dispatch any route
-
-echo $router->dispatch('/user/1', 'POST'); // Dispatch a POST route
 ```
 
 ## find

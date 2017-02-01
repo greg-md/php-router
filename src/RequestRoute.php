@@ -49,17 +49,19 @@ class RequestRoute implements RouteStrategy
         return $this->host ?: ($this->getParent() ? $this->getParent()->getHost() : null);
     }
 
-    public function match(string $path): ?RouteData
+    public function match(string $path, RouteData &$data = null): bool
     {
         [$regex, $regexParams] = $this->schemaInfo();
 
         if (preg_match(Regex::pattern('^' . $regex . '$'), $path, $matches)) {
             [$cleanParams, $params] = $this->fetchMatchedParams($regexParams, $matches);
 
-            return new RouteData($path, $params, $cleanParams);
+            $data = new RouteData($path, $params, $cleanParams);
+
+            return true;
         }
 
-        return null;
+        return false;
     }
 
     public function exec(RouteData $request): string

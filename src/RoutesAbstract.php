@@ -127,25 +127,6 @@ abstract class RoutesAbstract
         return $this;
     }
 
-    public function dispatch(string $path, ?string $method = null): string
-    {
-        foreach ($this->requestTypeRoutes($method) as $route) {
-            if ($request = $route->match($path)) {
-                return $route->exec($request);
-            }
-        }
-
-        foreach ($this->groupRoutes as $group) {
-            if ($matched = $group->match($path, $method)) {
-                [$route, $request] = $matched;
-
-                return $route->exec($request);
-            }
-        }
-
-        throw new RoutingException('Route for path `' . $path . '` not found.');
-    }
-
     public function find(string $name): ?RouteStrategy
     {
         if ($requestRoute = $this->findRequestRoute($name)) {
@@ -179,15 +160,6 @@ abstract class RoutesAbstract
     public function getNamespace(): ?string
     {
         return $this->namespace;
-    }
-
-    protected function getRoute(string $name): RouteStrategy
-    {
-        if ($route = $this->find($name)) {
-            return $route;
-        }
-
-        throw new RoutingException('Route `' . $name . '` not found.');
     }
 
     protected function findRequestRoute(string $name): ?RequestRoute
