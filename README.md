@@ -150,7 +150,7 @@ In this way, you can easily create good user friendly URLs.
 
 # Router
 
-Below you can find a list of **supported methods** of the `Router`.
+Below you can find a list of **supported methods**.
 
 * [url](#url) - Fetch an URL of a route;
 * [dispatch](#dispatch) - Dispatch an URL path;
