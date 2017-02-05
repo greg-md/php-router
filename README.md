@@ -85,7 +85,7 @@ $router->setDispatcher(function ($action) {
 **Also**, you can inverse the control of the controllers.
 
 Let say you want instantiate the controller with some custom data,
-or use some external IoC interface and run the init method if exists.
+or use some external IoC interface and run the `init` method if exists.
 
 ```php
 $router->setIoc(function ($controllerName) {
@@ -789,7 +789,7 @@ setIoc(callable $callable): $this
 _Example:_
 
 Let say you want instantiate the controller with some custom data,
-or use some external IoC interface and run the init method if exists.
+or use some external IoC interface and run the `init` method if exists.
 
 ```php
 $router->setIoc(function ($controllerName) {
