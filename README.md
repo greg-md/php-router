@@ -305,46 +305,6 @@ if ($group->match('/', 'GET', $route, $data)) {
 }
 ```
 
-## schema
-
-Get the schema.
-
-```php
-schema(): ?string
-```
-
-## schemaInfo
-
-Get information about schema.
-
-```php
-schemaInfo(): ['regex', 'params']
-```
-
-## setParent
-
-Set parent routing.
-
-```php
-setParent(RoutesAbstract $parent): $this
-```
-
-## getParent
-
-Get parent routing.
-
-```php
-getParent(): RoutesAbstract
-```
-
-## path
-
-Generate the path.
-
-```php
-path(array $params = []): array
-```
-
 # Request Route
 
 **Magic methods:**
@@ -570,6 +530,30 @@ $route = $router->find('users.save');
 $route->url(['foo' => 'bar']);
 ```
 
+## setNamespace
+
+Set a namespace.
+
+```php
+setNamespace(string $namespace): $this
+```
+
+_Example:_
+
+```php
+$router->setNamespace('Http');
+```
+
+## getNamespace
+
+Get the namespace.
+
+```php
+getNamespace(): string
+```
+
+# BindTrait
+
 ## bind
 
 Set an input/output binder for a parameter.
@@ -615,6 +599,8 @@ $this->bindStrategy('id', new class implements BindInOutStrategy {
     }
 });
 ```
+
+# BindInTrait
 
 ## bindIn
 
@@ -689,6 +675,8 @@ _Example:_
 $user = $router->bindInParam('id', 1);
 ```
 
+# BindOutTrait
+
 ## bindOut
 
 Set an output binder for a parameter.
@@ -758,6 +746,8 @@ _Example:_
 $user = $router->bindOutParam('id', 1);
 ```
 
+# DispatcherTrait
+
 ## setDispatcher
 
 Set an action dispatcher.
@@ -824,27 +814,7 @@ Get the inversion of control.
 getIoc(): callable
 ```
 
-## setNamespace
-
-Set a namespace.
-
-```php
-setNamespace(string $namespace): $this
-```
-
-_Example:_
-
-```php
-$router->setNamespace('Http');
-```
-
-## getNamespace
-
-Get the namespace.
-
-```php
-getNamespace(): string
-```
+# ErrorActionTrait
 
 ## setErrorAction
 
@@ -870,6 +840,8 @@ Get error action.
 getErrorAction(): mixed
 ```
 
+# HostTrait
+
 ## setHost
 
 Set a host.
@@ -890,6 +862,48 @@ Get the host.
 
 ```php
 getHost(): string
+```
+
+# RoutingTrait
+
+## schema
+
+Get the schema.
+
+```php
+schema(): ?string
+```
+
+## schemaInfo
+
+Get information about schema.
+
+```php
+schemaInfo(): ['regex', 'params']
+```
+
+## setParent
+
+Set parent routing.
+
+```php
+setParent(RoutesAbstract $parent): $this
+```
+
+## getParent
+
+Get parent routing.
+
+```php
+getParent(): RoutesAbstract
+```
+
+## path
+
+Generate the path.
+
+```php
+path(array $params = []): array
 ```
 
 # License
