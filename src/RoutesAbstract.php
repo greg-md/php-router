@@ -87,7 +87,7 @@ abstract class RoutesAbstract
             $types = [null];
         }
 
-        foreach ((array)$types as $type) {
+        foreach ((array) $types as $type) {
             $methodRef = &Arr::getArrayForceRef($this->routes, $type);
 
             Arr::set($methodRef, $name, $route);
