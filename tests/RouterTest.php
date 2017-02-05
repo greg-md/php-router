@@ -2,8 +2,8 @@
 
 namespace Greg\Routing\Tests;
 
-use Greg\Routing\Bind\BindInStrategy;
-use Greg\Routing\Bind\BindOutStrategy;
+use Greg\Routing\Binder\BindInStrategy;
+use Greg\Routing\Binder\BindOutStrategy;
 use Greg\Routing\GroupRoute;
 use Greg\Routing\RequestRoute;
 use Greg\Routing\RouteData;

@@ -152,7 +152,7 @@ In this way, you can easily create good user friendly URLs.
 
 Below you can find a list of **supported methods** of the `Router`.
 
-* [url](#url) - Get the URL of a route;
+* [url](#url) - Fetch an URL of a route;
 * [dispatch](#dispatch) - Dispatch an URL path;
 * [any](#any) - Create a route for any request method;
 * [request](#request) - Create a route for a specific request method;
@@ -230,7 +230,7 @@ echo $router->dispatch('/user/1', 'POST'); // Dispatch a POST route
 **Magic methods:**
 * [__construct](#__construct)
 
-Below you can find a list of **supported methods** of the `GroupRoute`.
+Below you can find a list of **supported methods**.
 
 * [match](#match) - Match a path against routes;
 * [schema](#schema) - Get the schema;
@@ -343,6 +343,136 @@ Generate the path.
 
 ```php
 path(array $params = []): array
+```
+
+# Request Route
+
+**Magic methods:**
+* [__construct](#__construct)
+
+Below you can find a list of **supported methods**.
+
+* [match](#match) - Match a path against routes;
+* [exec](#exec) - Execute the route;
+* [url](#url) - Fetch an URL for the route;
+* [schema](#schema) - Get the schema;
+* [schemaInfo](#schemaInfo) - Get information about schema;
+* [setParent](#setParent) - Set parent routing;
+* [getParent](#getParent) - Get parent routing;
+* [path](#path) - Generate the path;
+* [bind](#bind) - Set an input/output binder for a parameter;
+* [bindStrategy](#bindstrategy) - Set an input/output binder for a parameter, using strategy;
+* [bindIn](#bindin) - Set an input binder for a parameter;
+* [bindInStrategy](#bindinstrategy) - Set an input binder for a parameter, using strategy;
+* [binderIn](#binderin) - Get the input binder of a parameter;
+* [bindInParam](#bindinparam) - Bind an input parameter;
+* [bindOut](#bindout) - Set an output binder for a parameter;
+* [bindOutStrategy](#bindoutstrategy) - Set an output binder for a parameter, using strategy;
+* [binderOut](#binderout) - Get the output binder of a parameter;
+* [bindOutParam](#bindoutparam) - Bind an output parameter;
+* [setDispatcher](#setdispatcher) - Set an action dispatcher;
+* [getDispatcher](#getdispatcher) - Get the actions dispatcher;
+* [setIoc](#setioc) - Set an inversion of control for controllers;
+* [getIoc](#getioc) - Get the inversion of control;
+* [setErrorAction](#seterroraction) - Set an error action;
+* [getErrorAction](#geterroraction) - Get the error action;
+* [setHost](#sethost) - Set a host;
+* [getHost](#gethost) - Get the host.
+
+## __construct
+
+Initialize the request route.
+
+```php
+__construct(string $schema, $action)
+```
+
+_Example:_
+
+```php
+$route = new \Greg\Routing\RequestRoute('/users', 'UsersController@index');
+
+$route->exec();
+```
+
+## match
+
+Match a path against route.
+
+```php
+match(string $path, RouteData &$data = null): bool
+```
+
+_Example:_
+
+```php
+if ($route->match('/', $data)) {
+    print_r($data->params());
+}
+```
+
+## exec
+
+Execute the route.
+
+```php
+exec(RouteData $data): string
+```
+
+_Example:_
+
+```php
+$route->exec(new RouteData('/', ['foo' => 'bar']));
+```
+
+## url
+
+Fetch an URL for the route.
+
+```php
+url(array $params = []): string
+```
+
+_Example:_
+
+```php
+$url = $route->url(['foo' => 'bar']);
+```
+
+# Hidden Route
+
+**Magic methods:**
+* [__construct](#__construct)
+
+Below you can find a list of **supported methods**.
+
+* [url](#url) - Fetch an URL for the route;
+* [schema](#schema) - Get the schema;
+* [schemaInfo](#schemaInfo) - Get information about schema;
+* [setParent](#setParent) - Set parent routing;
+* [getParent](#getParent) - Get parent routing;
+* [path](#path) - Generate the path;
+* [bindOut](#bindout) - Set an output binder for a parameter;
+* [bindOutStrategy](#bindoutstrategy) - Set an output binder for a parameter, using strategy;
+* [binderOut](#binderout) - Get the output binder of a parameter;
+* [bindOutParam](#bindoutparam) - Bind an output parameter;
+* [setHost](#sethost) - Set a host;
+* [getHost](#gethost) - Get the host.
+
+## __construct
+
+Initialize the request route.
+
+```php
+__construct(string $schema)
+```
+
+_Example:_
+
+```php
+$route = new \Greg\Routing\HiddenRoute('/users');
+
+$route->exec();
 ```
 
 # Routing Abstract

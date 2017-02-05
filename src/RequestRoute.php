@@ -2,16 +2,15 @@
 
 namespace Greg\Routing;
 
-use Greg\Routing\Bind\BindInStrategy;
-use Greg\Routing\Bind\BindInTrait;
-use Greg\Routing\Bind\BindOutStrategy;
-use Greg\Routing\Bind\BindOutTrait;
+use Greg\Routing\Binder\BindInStrategy;
+use Greg\Routing\Binder\BindOutStrategy;
+use Greg\Routing\Binder\BindTrait;
 use Greg\Support\Obj;
 use Greg\Support\Tools\Regex;
 
 class RequestRoute implements RouteStrategy
 {
-    use RoutingTrait, BindInTrait, BindOutTrait, RouteTrait, ErrorActionTrait, DispatcherTrait, HostTrait;
+    use RoutingTrait, BindTrait, RouteTrait, ErrorActionTrait, DispatcherTrait, HostTrait;
 
     private $action;
 
@@ -64,14 +63,14 @@ class RequestRoute implements RouteStrategy
         return false;
     }
 
-    public function exec(RouteData $request): string
+    public function exec(RouteData $data): string
     {
         try {
-            $result = $this->execAction($this->action, $request);
+            $result = $this->execAction($this->action, $data);
 
             return $result;
         } catch (\Exception $e) {
-            return $this->execErrorAction($e, $request);
+            return $this->execErrorAction($e, $data);
         }
     }
 

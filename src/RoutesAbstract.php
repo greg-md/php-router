@@ -2,9 +2,7 @@
 
 namespace Greg\Routing;
 
-use Greg\Routing\Bind\BindInOutStrategy;
-use Greg\Routing\Bind\BindInTrait;
-use Greg\Routing\Bind\BindOutTrait;
+use Greg\Routing\Binder\BindTrait;
 use Greg\Support\Arr;
 use Greg\Support\Http\Request;
 use Greg\Support\Obj;
@@ -12,7 +10,7 @@ use Greg\Support\Str;
 
 abstract class RoutesAbstract
 {
-    use BindInTrait, BindOutTrait, ErrorActionTrait, DispatcherTrait, HostTrait;
+    use BindTrait, ErrorActionTrait, DispatcherTrait, HostTrait;
 
     /**
      * @var RequestRoute[][]
@@ -104,26 +102,6 @@ abstract class RoutesAbstract
         Obj::call($callable, $route);
 
         return $route;
-    }
-
-    public function bind($name, callable $callableIn, ?callable $callableOut = null)
-    {
-        $this->bindIn($name, $callableIn);
-
-        if ($callableOut) {
-            $this->bindOut($name, $callableOut);
-        }
-
-        return $this;
-    }
-
-    public function bindStrategy(string $name, BindInOutStrategy $strategy)
-    {
-        $this->bindInStrategy($name, $strategy);
-
-        $this->bindOutStrategy($name, $strategy);
-
-        return $this;
     }
 
     public function find(string $name): ?RouteStrategy

@@ -2,8 +2,8 @@
 
 namespace Greg\Routing;
 
-use Greg\Routing\Bind\BindInStrategy;
-use Greg\Routing\Bind\BindOutStrategy;
+use Greg\Routing\Binder\BindInStrategy;
+use Greg\Routing\Binder\BindOutStrategy;
 use Greg\Support\Tools\Regex;
 
 class GroupRoute extends RoutesAbstract

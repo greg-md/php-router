@@ -2,7 +2,7 @@
 
 namespace Greg\Routing;
 
-use Greg\Routing\Bind\BindOutTrait;
+use Greg\Routing\Binder\BindOutTrait;
 
 class HiddenRoute implements RouteStrategy
 {

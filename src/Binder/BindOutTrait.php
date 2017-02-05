@@ -1,6 +1,6 @@
 <?php
 
-namespace Greg\Routing\Bind;
+namespace Greg\Routing\Binder;
 
 use Greg\Support\Obj;
 
