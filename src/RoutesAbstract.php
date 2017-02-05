@@ -13,9 +13,9 @@ abstract class RoutesAbstract
     use BindTrait, ErrorActionTrait, DispatcherTrait, HostTrait;
 
     /**
-     * @var RequestRoute[][]
+     * @var Route[][]
      */
-    protected $requestRoutes = [];
+    protected $routes = [];
 
     /**
      * @var GroupRoute[]
@@ -29,61 +29,69 @@ abstract class RoutesAbstract
 
     private $namespace;
 
-    public function any(string $schema, $action, ?string $name = null): RequestRoute
+    public function any(string $schema, $action, ?string $name = null): Route
     {
-        return $this->request($schema, $action, $name);
+        return $this->route(null, $schema, $action, $name);
     }
 
-    public function get(string $schema, $action, ?string $name = null): RequestRoute
+    public function get(string $schema, $action, ?string $name = null): Route
     {
-        return $this->request($schema, $action, $name, Request::TYPE_GET);
+        return $this->route(Request::TYPE_GET, $schema, $action, $name);
     }
 
-    public function head(string $schema, $action, ?string $name = null): RequestRoute
+    public function head(string $schema, $action, ?string $name = null): Route
     {
-        return $this->request($schema, $action, $name, Request::TYPE_HEAD);
+        return $this->route(Request::TYPE_HEAD, $schema, $action, $name);
     }
 
-    public function post(string $schema, $action, ?string $name = null): RequestRoute
+    public function post(string $schema, $action, ?string $name = null): Route
     {
-        return $this->request($schema, $action, $name, Request::TYPE_POST);
+        return $this->route(Request::TYPE_POST, $schema, $action, $name);
     }
 
-    public function put(string $schema, $action, ?string $name = null): RequestRoute
+    public function put(string $schema, $action, ?string $name = null): Route
     {
-        return $this->request($schema, $action, $name, Request::TYPE_PUT);
+        return $this->route(Request::TYPE_PUT, $schema, $action, $name);
     }
 
-    public function delete(string $schema, $action, ?string $name = null): RequestRoute
+    public function delete(string $schema, $action, ?string $name = null): Route
     {
-        return $this->request($schema, $action, $name, Request::TYPE_DELETE);
+        return $this->route(Request::TYPE_DELETE, $schema, $action, $name);
     }
 
-    public function connect(string $schema, $action, ?string $name = null): RequestRoute
+    public function connect(string $schema, $action, ?string $name = null): Route
     {
-        return $this->request($schema, $action, $name, Request::TYPE_CONNECT);
+        return $this->route(Request::TYPE_CONNECT, $schema, $action, $name);
     }
 
-    public function options(string $schema, $action, ?string $name = null): RequestRoute
+    public function options(string $schema, $action, ?string $name = null): Route
     {
-        return $this->request($schema, $action, $name, Request::TYPE_OPTIONS);
+        return $this->route(Request::TYPE_OPTIONS, $schema, $action, $name);
     }
 
-    public function trace(string $schema, $action, ?string $name = null): RequestRoute
+    public function trace(string $schema, $action, ?string $name = null): Route
     {
-        return $this->request($schema, $action, $name, Request::TYPE_TRACE);
+        return $this->route(Request::TYPE_TRACE, $schema, $action, $name);
     }
 
-    public function patch(string $schema, $action, ?string $name = null): RequestRoute
+    public function patch(string $schema, $action, ?string $name = null): Route
     {
-        return $this->request($schema, $action, $name, Request::TYPE_PATCH);
+        return $this->route(Request::TYPE_PATCH, $schema, $action, $name);
     }
 
-    public function request(string $schema, $action, ?string $name = null, ?string $method = null): RequestRoute
+    public function route($types, string $schema, $action, ?string $name = null): Route
     {
-        $methodRef = &Arr::getArrayForceRef($this->requestRoutes, $method);
+        $route = $this->newRoute($schema, $action);
 
-        Arr::set($methodRef, $name, $route = $this->newRequest($schema, $action));
+        if ($types === null) {
+            $types = [null];
+        }
+
+        foreach ((array)$types as $type) {
+            $methodRef = &Arr::getArrayForceRef($this->routes, $type);
+
+            Arr::set($methodRef, $name, $route);
+        }
 
         return $route;
     }
@@ -106,8 +114,8 @@ abstract class RoutesAbstract
 
     public function find(string $name): ?RouteStrategy
     {
-        if ($requestRoute = $this->findRequestRoute($name)) {
-            return $requestRoute;
+        if ($route = $this->findRoute($name)) {
+            return $route;
         }
 
         if ($hiddenRoute = $this->findHiddenRoute($name)) {
@@ -139,9 +147,9 @@ abstract class RoutesAbstract
         return $this->namespace;
     }
 
-    protected function findRequestRoute(string $name): ?RequestRoute
+    protected function findRoute(string $name): ?Route
     {
-        foreach ($this->requestRoutes as $routes) {
+        foreach ($this->routes as $routes) {
             if (isset($routes[$name])) {
                 return $routes[$name];
             }
@@ -158,22 +166,22 @@ abstract class RoutesAbstract
     /**
      * @param $method
      *
-     * @return RequestRoute[]
+     * @return Route[]
      */
-    protected function requestTypeRoutes(?string $method): array
+    protected function typeRoutes(?string $method): array
     {
-        $routes = Arr::getArray($this->requestRoutes, $method);
+        $routes = Arr::getArray($this->routes, $method);
 
         if ($method) {
-            $routes = array_merge(Arr::getArray($this->requestRoutes, ''), $routes);
+            $routes = array_merge(Arr::getArray($this->routes, ''), $routes);
         }
 
         return $routes;
     }
 
-    protected function newRequest(string $schema, $action): RequestRoute
+    protected function newRoute(string $schema, $action): Route
     {
-        return (new RequestRoute($schema, $action))->setParent($this);
+        return (new Route($schema, $action))->setParent($this);
     }
 
     protected function newGroup(string $schema): GroupRoute
@@ -186,8 +194,8 @@ abstract class RoutesAbstract
         return (new HiddenRoute($schema))->setParent($this);
     }
 
-    protected function requestRoutes(): array
+    protected function routes(): array
     {
-        return $this->requestRoutes;
+        return $this->routes;
     }
 }

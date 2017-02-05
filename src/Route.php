@@ -8,7 +8,7 @@ use Greg\Routing\Binder\BindTrait;
 use Greg\Support\Obj;
 use Greg\Support\Tools\Regex;
 
-class RequestRoute implements RouteStrategy
+class Route implements RouteStrategy
 {
     use RoutingTrait, BindTrait, RouteTrait, ErrorActionTrait, DispatcherTrait, HostTrait;
 
@@ -74,19 +74,19 @@ class RequestRoute implements RouteStrategy
         }
     }
 
-    protected function execAction($action, RouteData $request, ...$params): string
+    protected function execAction($action, RouteData $data, ...$params): string
     {
         if (!is_callable($action = $this->fetchAction($action))) {
             throw new RoutingException('Route action is not a callable.');
         }
 
-        return Obj::callMixed($action, $request, ...array_values($request->params()), ...$params);
+        return Obj::callMixed($action, $data, ...array_values($data->params()), ...$params);
     }
 
-    protected function execErrorAction(\Exception $e, RouteData $request): string
+    protected function execErrorAction(\Exception $e, RouteData $data): string
     {
         if ($errorAction = $this->getErrorAction()) {
-            return $this->execAction($errorAction, $request, $e);
+            return $this->execAction($errorAction, $data, $e);
         }
 
         throw $e;

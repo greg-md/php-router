@@ -11,7 +11,7 @@ class Router extends RoutesAbstract
 
     public function dispatch(string $path, ?string $method = null): string
     {
-        foreach ($this->requestTypeRoutes($method) as $route) {
+        foreach ($this->typeRoutes($method) as $route) {
             if ($route->match($path, $data)) {
                 return $route->exec($data);
             }

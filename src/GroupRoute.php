@@ -69,7 +69,7 @@ class GroupRoute extends RoutesAbstract
 
     protected function matchChild(string $path, ?string $method = null, RouteStrategy &$route = null, RouteData &$data = null): bool
     {
-        foreach ($this->requestTypeRoutes($method) as $route) {
+        foreach ($this->typeRoutes($method) as $route) {
             if ($route->match($path, $data)) {
                 return true;
             }

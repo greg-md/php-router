@@ -5,7 +5,7 @@ namespace Greg\Routing\Tests;
 use Greg\Routing\Binder\BindInStrategy;
 use Greg\Routing\Binder\BindOutStrategy;
 use Greg\Routing\GroupRoute;
-use Greg\Routing\RequestRoute;
+use Greg\Routing\Route;
 use Greg\Routing\RouteData;
 use Greg\Routing\Router;
 use Greg\Routing\RoutingException;
@@ -139,7 +139,7 @@ class RouterTest extends TestCase
             }
         });
 
-        $route = (new RequestRoute('/', function () {
+        $route = (new Route('/', function () {
         }))->setParent($group);
 
         $this->assertEquals(1, $route->bindOutParam('id', (object) ['id' => 1]));
@@ -214,7 +214,7 @@ class RouterTest extends TestCase
     /** @test */
     public function it_gets_matched_path()
     {
-        $route = new RequestRoute($schema = '/api[/v{v}?/{vv}]', null);
+        $route = new Route($schema = '/api[/v{v}?/{vv}]', null);
 
         /* @var RouteData $data */
         $this->assertTrue($route->match('/api', $data));
@@ -247,7 +247,7 @@ class RouterTest extends TestCase
     /** @test */
     public function it_allows_regex_param()
     {
-        $route = new RequestRoute('/user/{id:1|[0-9]+}', null);
+        $route = new Route('/user/{id:1|[0-9]+}', null);
 
         $this->assertEquals('/user/1', $route->url([]));
 
@@ -261,7 +261,7 @@ class RouterTest extends TestCase
     /** @test */
     public function it_gets_int_param()
     {
-        $route = new RequestRoute('/{id#int}', null);
+        $route = new Route('/{id#int}', null);
 
         /* @var RouteData $data */
         $this->assertTrue($route->match('/1', $data));
@@ -284,7 +284,7 @@ class RouterTest extends TestCase
     /** @test */
     public function it_gets_int_unsigned_param()
     {
-        $route = new RequestRoute('/{id#uint}', null);
+        $route = new Route('/{id#uint}', null);
 
         /* @var RouteData $data */
         $this->assertTrue($route->match('/1', $data));
@@ -299,7 +299,7 @@ class RouterTest extends TestCase
     /** @test */
     public function it_gets_with_delimiter_param()
     {
-        $route = new RequestRoute('/{id|*}', null);
+        $route = new Route('/{id|*}', null);
 
         /* @var RouteData $data */
         $this->assertTrue($route->match('/1/1', $data));
@@ -312,7 +312,7 @@ class RouterTest extends TestCase
     /** @test */
     public function it_gets_boolean_param()
     {
-        $route = new RequestRoute('/{id#boolean}', null);
+        $route = new Route('/{id#boolean}', null);
 
         /* @var RouteData $data */
         $this->assertTrue($route->match('/1', $data));
@@ -333,7 +333,7 @@ class RouterTest extends TestCase
     /** @test */
     public function it_throws_on_unknown_param_type()
     {
-        $route = new RequestRoute('/{id#undefined}', null);
+        $route = new Route('/{id#undefined}', null);
 
         $this->expectException(RoutingException::class);
 
