@@ -10,7 +10,7 @@ use Greg\Support\Str;
 
 abstract class RoutesAbstract
 {
-    use BindTrait, ErrorActionTrait, DispatcherTrait, HostTrait;
+    use BindTrait, ErrorActionTrait, DispatcherTrait, HostTrait, PatternsTrait;
 
     /**
      * @var Route[][]
