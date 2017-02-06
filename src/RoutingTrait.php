@@ -171,4 +171,6 @@ trait RoutingTrait
 
         return [$cleanParams, $params];
     }
+
+    abstract public function getPattern(string $name): ?string;
 }
