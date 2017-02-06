@@ -140,6 +140,10 @@ trait RoutingTrait
             return false;
         }
 
+        if (!$param['regex']) {
+            $param['regex'] = $this->getPattern($param['name']);
+        }
+
         if ($param['type'] and $value !== (string) RouteUtils::paramFixType($value, $param['type'])) {
             throw new RoutingException('Parameter `' . $name . '` is not `' . $param['type'] . '`.');
         }

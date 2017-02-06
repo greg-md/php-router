@@ -178,6 +178,9 @@ Below you can find a list of **supported methods**.
 * [bindOutStrategy](#bindoutstrategy) - Set an output binder for a parameter, using strategy;
 * [binderOut](#binderout) - Get the output binder of a parameter;
 * [bindOutParam](#bindoutparam) - Bind an output parameter;
+* [pattern](#pattern) - Set a parameter pattern;
+* [type](#type) - Set a parameter type;
+* [getPattern](#getpattern) - Get a parameter pattern;
 * [setDispatcher](#setdispatcher) - Set an action dispatcher;
 * [getDispatcher](#getdispatcher) - Get the actions dispatcher;
 * [setIoc](#setioc) - Set an inversion of control for controllers;
@@ -262,6 +265,9 @@ Below you can find a list of **supported methods**.
 * [bindOutStrategy](#bindoutstrategy) - Set an output binder for a parameter, using strategy;
 * [binderOut](#binderout) - Get the output binder of a parameter;
 * [bindOutParam](#bindoutparam) - Bind an output parameter;
+* [pattern](#pattern) - Set a parameter pattern;
+* [type](#type) - Set a parameter type;
+* [getPattern](#getpattern) - Get a parameter pattern;
 * [setDispatcher](#setdispatcher) - Set an action dispatcher;
 * [getDispatcher](#getdispatcher) - Get the actions dispatcher;
 * [setIoc](#setioc) - Set an inversion of control for controllers;
@@ -315,6 +321,8 @@ Below you can find a list of **supported methods**.
 * [match](#match) - Match a path against routes;
 * [exec](#exec) - Execute the route;
 * [url](#url) - Fetch an URL for the route;
+* [where](#where) - Set a parameter pattern. Alias of [pattern](#pattern);
+* [whereIs](#whereis) - Set a parameter type. Alias of [type](#type);
 * [schema](#schema) - Get the schema;
 * [schemaInfo](#schemaInfo) - Get information about schema;
 * [setParent](#setParent) - Set parent routing;
@@ -330,6 +338,9 @@ Below you can find a list of **supported methods**.
 * [bindOutStrategy](#bindoutstrategy) - Set an output binder for a parameter, using strategy;
 * [binderOut](#binderout) - Get the output binder of a parameter;
 * [bindOutParam](#bindoutparam) - Bind an output parameter;
+* [pattern](#pattern) - Set a parameter pattern;
+* [type](#type) - Set a parameter type;
+* [getPattern](#getpattern) - Get a parameter pattern;
 * [setDispatcher](#setdispatcher) - Set an action dispatcher;
 * [getDispatcher](#getdispatcher) - Get the actions dispatcher;
 * [setIoc](#setioc) - Set an inversion of control for controllers;
@@ -904,6 +915,32 @@ Generate the path.
 
 ```php
 path(array $params = []): array
+```
+
+# PatternsTrait
+
+## pattern
+
+Set a parameter pattern.
+
+```php
+pattern(string $name, string $regex): $this
+```
+
+## type
+
+Set a parameter type pattern.
+
+```php
+type(string $name, string $type): $this
+```
+
+## getPattern
+
+Get parameter pattern.
+
+```php
+getPattern(string $name): ?string
 ```
 
 # License

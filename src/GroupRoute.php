@@ -49,6 +49,11 @@ class GroupRoute extends RoutesAbstract
         return $namespace . '\\' . parent::getNamespace();
     }
 
+    public function getPattern(string $name): ?string
+    {
+        return parent::getPattern($name) ?: ($this->getParent() ? $this->getParent()->getPattern($name) : null);
+    }
+
     public function match(string $path, ?string $method = null, RouteStrategy &$route = null, RouteData &$data = null): bool
     {
         $info = $this->schemaInfo();

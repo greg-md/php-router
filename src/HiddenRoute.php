@@ -15,6 +15,11 @@ class HiddenRoute implements RouteStrategy
         return $this;
     }
 
+    public function getPattern(string $name): ?string
+    {
+        return $this->getParent()->getPattern($name);
+    }
+
     public function binderOut(string $name)
     {
         return $this->bindersOut[$name] ?? ($this->getParent() ? $this->getParent()->binderOut($name) : null);

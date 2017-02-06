@@ -10,7 +10,7 @@ use Greg\Support\Tools\Regex;
 
 class Route implements RouteStrategy
 {
-    use RoutingTrait, BindTrait, RouteTrait, ErrorActionTrait, DispatcherTrait, HostTrait;
+    use RoutingTrait, BindTrait, RouteTrait, ErrorActionTrait, DispatcherTrait, HostTrait, PatternsTrait;
 
     private $action;
 
@@ -21,6 +21,21 @@ class Route implements RouteStrategy
         $this->action = $action;
 
         return $this;
+    }
+
+    public function where(string $name, string $regex)
+    {
+        return $this->pattern($name, $regex);
+    }
+
+    public function whereIs(string $name, string $type)
+    {
+        return $this->type($name, $type);
+    }
+
+    public function getPattern(string $name): ?string
+    {
+        return $this->patterns[$name] ?? ($this->getParent() ? $this->getParent()->getPattern($name) : null);
     }
 
     public function binderIn(string $name): ?BindInStrategy
