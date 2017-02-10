@@ -18,6 +18,8 @@ A smarter router for web artisans.
 * [Group Route](#group-route)
 * [Request Route](#request-route)
 * [Hidden Route](#hidden-route)
+* [License](#license)
+* [Huuuge Quote](#huuuge-quote)
 
 # Requirements
 
@@ -946,3 +948,7 @@ getPattern(string $name): ?string
 # License
 
 MIT © [Grigorii Duca](http://greg.md)
+
+# Huuuge Quote
+
+![I fear not the man who has practiced 10,000 programming languages once, but I fear the man who has practiced one programming language 10,000 times. #horrorsquad](http://greg.md/huuuge-quote-fb.jpg)
