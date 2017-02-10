@@ -9,7 +9,7 @@
 
 A smarter router for web artisans.
 
-# Table of contents:
+# Table of Contents:
 
 * [Requirements](#requirements)
 * [How It Works](#how-it-works)
