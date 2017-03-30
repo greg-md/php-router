@@ -130,7 +130,7 @@ class Route implements RouteStrategy
         return $action;
     }
 
-    protected function fetchController($controllerName)
+    protected function fetchController(string $controllerName)
     {
         if ($parent = $this->getParent()) {
             $controllerName = $parent->getNamespace() . '\\' . $controllerName;

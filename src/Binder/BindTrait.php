@@ -6,7 +6,7 @@ trait BindTrait
 {
     use BindInTrait, BindOutTrait;
 
-    public function bind($name, callable $callableIn, ?callable $callableOut = null)
+    public function bind(string $name, callable $callableIn, ?callable $callableOut = null)
     {
         $this->bindIn($name, $callableIn);
 

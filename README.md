@@ -502,7 +502,7 @@ $router->url('partner.catalog', ['name' => 'cars']); // result: http://mypartner
 Create a group of routes.
 
 ```php
-group(string $schema, ?string $prefix, callable $callable): \Greg\Routing\GroupRoute
+group(string $schema, ?string $prefix, callable(\Greg\Routing\GroupRoute $route): void $callable): \Greg\Routing\GroupRoute
 ```
 
 _Example:_
@@ -572,7 +572,7 @@ getNamespace(): string
 Set an input/output binder for a parameter.
 
 ```php
-bind($name, callable $callableIn, ?callable $callableOut = null): $this
+bind(string $name, callable(mixed $value): mixed $callableIn, ?callable(mixed $value): mixed $callableOut = null): $this
 ```
 
 _Example:_
@@ -620,7 +620,7 @@ $this->bindStrategy('id', new class implements BindInOutStrategy {
 Set an input binder for a parameter.
 
 ```php
-bindIn($name, callable $callable): $this
+bindIn($name, callable(mixed $value): mixed $callable): $this
 ```
 
 _Example:_
@@ -638,7 +638,7 @@ $this->bindIn('id', function($id) {
 Set an input binder for a parameter, using strategy.
 
 ```php
-bindInStrategy($name, \Greg\Routing\BindInStrategy $callable): $this
+bindInStrategy($name, \Greg\Routing\BindInStrategy $strategy): $this
 ```
 
 _Example:_
@@ -695,7 +695,7 @@ $user = $router->bindInParam('id', 1);
 Set an output binder for a parameter.
 
 ```php
-bindOut($name, callable $callable): $this
+bindOut($name, callable(mixed $value): mixed $callable): $this
 ```
 
 _Example:_
@@ -711,7 +711,7 @@ $this->bindOut('id', function($user) {
 Set an output binder for a parameter, using strategy.
 
 ```php
-bindOutStrategy($name, \Greg\Routing\BindOutStrategy $callable): $this
+bindOutStrategy($name, \Greg\Routing\BindOutStrategy $strategy): $this
 ```
 
 _Example:_
@@ -766,7 +766,7 @@ $user = $router->bindOutParam('id', 1);
 Set an action dispatcher.
 
 ```php
-setDispatcher(callable $callable): $this
+setDispatcher(callable(mixed $action): mixed $callable): $this
 ```
 
 _Example:_
@@ -796,7 +796,7 @@ getDispatcher(): callable
 Set an inversion of control for controllers.
 
 ```php
-setIoc(callable $callable): $this
+setIoc(callable(string $controllerName): object $callable): $this
 ```
 
 _Example:_

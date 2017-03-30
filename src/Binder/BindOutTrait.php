@@ -11,9 +11,9 @@ trait BindOutTrait
      */
     private $bindersOut = [];
 
-    public function bindOut(string $name, callable $strategy)
+    public function bindOut(string $name, callable $callable)
     {
-        $this->bindersOut[$name] = $strategy;
+        $this->bindersOut[$name] = $callable;
 
         return $this;
     }

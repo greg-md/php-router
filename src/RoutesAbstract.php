@@ -5,7 +5,6 @@ namespace Greg\Routing;
 use Greg\Routing\Binder\BindTrait;
 use Greg\Support\Arr;
 use Greg\Support\Http\Request;
-use Greg\Support\Obj;
 use Greg\Support\Str;
 
 abstract class RoutesAbstract
@@ -107,7 +106,7 @@ abstract class RoutesAbstract
     {
         Arr::set($this->groupRoutes, $prefix, $route = $this->newGroup($schema));
 
-        Obj::call($callable, $route);
+        call_user_func_array($callable, [$route]);
 
         return $route;
     }
