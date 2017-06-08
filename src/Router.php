@@ -11,19 +11,11 @@ class Router extends RoutesAbstract
 
     public function dispatch(string $path, ?string $method = null): string
     {
-        foreach ($this->typeRoutes($method) as $route) {
-            if ($route->match($path, $data)) {
-                return $route->exec($data);
-            }
+        if (!$route = $this->detect($path, $method, $data)) {
+            throw new RoutingException('Route for path `' . $path . '` not found.');
         }
 
-        foreach ($this->groupRoutes as $group) {
-            if ($group->match($path, $method, $route, $data)) {
-                return $route->exec($data);
-            }
-        }
-
-        throw new RoutingException('Route for path `' . $path . '` not found.');
+        return $route->exec($data);
     }
 
     protected function getRoute(string $name): RouteStrategy

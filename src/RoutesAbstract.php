@@ -134,6 +134,27 @@ abstract class RoutesAbstract
         return null;
     }
 
+    public function detect(string $path, ?string $method = null, RouteData &$routeData = null): ?Route
+    {
+        foreach ($this->typeRoutes($method) as $route) {
+            if ($route->match($path, $data)) {
+                $routeData = $data;
+
+                return $route;
+            }
+        }
+
+        foreach ($this->groupRoutes as $group) {
+            if ($group->match($path, $method, $route, $data)) {
+                $routeData = $data;
+
+                return $route;
+            }
+        }
+
+        return null;
+    }
+
     public function setNamespace(string $namespace)
     {
         $this->namespace = $namespace;
