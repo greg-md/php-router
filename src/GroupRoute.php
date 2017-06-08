@@ -4,7 +4,6 @@ namespace Greg\Routing;
 
 use Greg\Routing\Binder\BindInStrategy;
 use Greg\Routing\Binder\BindOutStrategy;
-use Greg\Support\Tools\Regex;
 
 class GroupRoute extends RoutesAbstract
 {
@@ -58,7 +57,7 @@ class GroupRoute extends RoutesAbstract
     {
         $info = $this->schemaInfo();
 
-        if (preg_match(Regex::pattern('^' . $info['regex'] . '(?\'child\'.*)'), $path, $matches)) {
+        if (preg_match('#^' . $info['regex'] . '(?\'child\'.*)#', $path, $matches)) {
             if (!$this->matchChild($matches['child'], $method, $route, $data)) {
                 return false;
             }

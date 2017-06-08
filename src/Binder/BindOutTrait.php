@@ -2,8 +2,6 @@
 
 namespace Greg\Routing\Binder;
 
-use Greg\Support\Obj;
-
 trait BindOutTrait
 {
     /**
@@ -42,7 +40,7 @@ trait BindOutTrait
                 return $binder->output($value);
             }
 
-            return Obj::call($binder, $value);
+            return call_user_func_array($binder, [$value]);
         }
 
         return $value;

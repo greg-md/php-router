@@ -110,7 +110,7 @@ class Route implements RouteStrategy
     protected function fetchAction($action)
     {
         if ($dispatcher = $this->getDispatcher()) {
-            $action = Obj::call($dispatcher, $action);
+            $action = call_user_func_array($dispatcher, [$action]);
         }
 
         if (is_scalar($action)) {
@@ -137,7 +137,7 @@ class Route implements RouteStrategy
         }
 
         if ($ioc = $this->getIoc()) {
-            $controller = Obj::call($ioc, $controllerName);
+            $controller = call_user_func_array($ioc, [$controllerName]);
 
             if (!is_object($controller)) {
                 throw new \Exception('Controller `' . $controllerName . '` could not be instantiated.');
