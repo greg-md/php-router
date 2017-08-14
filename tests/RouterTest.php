@@ -1,14 +1,9 @@
 <?php
 
-namespace Greg\Routing\Tests;
+namespace Greg\Routing;
 
 use Greg\Routing\Binder\BindInStrategy;
 use Greg\Routing\Binder\BindOutStrategy;
-use Greg\Routing\GroupRoute;
-use Greg\Routing\Route;
-use Greg\Routing\RouteData;
-use Greg\Routing\Router;
-use Greg\Routing\RoutingException;
 use PHPUnit\Framework\TestCase;
 
 class RouterTest extends TestCase
