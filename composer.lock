@@ -12,19 +12,19 @@
             "source": {
                 "type": "git",
                 "url": "https://github.com/greg-md/php-support.git",
-                "reference": "e2537a61ffd67bf416a58238ac4d201cd08500a4"
+                "reference": "b0c95b2f6c34eb9e6d753a74984b9c1d5b49d2e1"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/greg-md/php-support/zipball/e2537a61ffd67bf416a58238ac4d201cd08500a4",
-                "reference": "e2537a61ffd67bf416a58238ac4d201cd08500a4",
+                "url": "https://api.github.com/repos/greg-md/php-support/zipball/b0c95b2f6c34eb9e6d753a74984b9c1d5b49d2e1",
+                "reference": "b0c95b2f6c34eb9e6d753a74984b9c1d5b49d2e1",
                 "shasum": ""
             },
             "require": {
                 "php": "^5.6 || ^7.0"
             },
             "require-dev": {
-                "phpunit/phpunit": "5.7.*"
+                "phpunit/phpunit": "6.3.*"
             },
             "type": "library",
             "autoload": {
@@ -53,7 +53,7 @@
                 "support",
                 "web-artisans"
             ],
-            "time": "2017-08-13 14:20:37"
+            "time": "2017-08-17 11:52:48"
         }
     ],
     "packages-dev": [
@@ -720,12 +720,12 @@
             "source": {
                 "type": "git",
                 "url": "https://github.com/sebastianbergmann/phpunit.git",
-                "reference": "82e3e15b1e0657ce58ac9be50c5638fac6414201"
+                "reference": "cc7ad71d8a553cbea60e404585bdebd08f9e660c"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/sebastianbergmann/phpunit/zipball/82e3e15b1e0657ce58ac9be50c5638fac6414201",
-                "reference": "82e3e15b1e0657ce58ac9be50c5638fac6414201",
+                "url": "https://api.github.com/repos/sebastianbergmann/phpunit/zipball/cc7ad71d8a553cbea60e404585bdebd08f9e660c",
+                "reference": "cc7ad71d8a553cbea60e404585bdebd08f9e660c",
                 "shasum": ""
             },
             "require": {
@@ -796,7 +796,7 @@
                 "testing",
                 "xunit"
             ],
-            "time": "2017-08-10T16:53:23+00:00"
+            "time": "2017-08-17T07:36:05+00:00"
         },
         {
             "name": "phpunit/phpunit-mock-objects",
