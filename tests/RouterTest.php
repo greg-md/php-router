@@ -13,10 +13,8 @@ class RouterTest extends TestCase
      */
     private $router = null;
 
-    protected function setUp()
+    protected function setUp(): void
     {
-        parent::setUp();
-
         $this->router = new Router();
     }
 
